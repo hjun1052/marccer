@@ -1,0 +1,66 @@
+/* ============================================================
+   GLOBAL STYLES - League Race Analyzer
+   Dense, utilitarian developer dashboard
+   ============================================================ */
+
+:root {
+  --bg: #ffffff;
+  --bg-panel: #f8f9fa;
+  --bg-hover: #eaecf0;
+  --bg-active: #dde1e5;
+  --border: #a2a9b1;
+  --border-light: #c8ccd1;
+  --text: #202122;
+  --text-dim: #54595d;
+  --text-bright: #000000;
+  --accent: #54595d;
+  --accent-dim: rgba(0, 0, 0, 0.06);
+  --blue: #0645ad;
+  --blue-dim: rgba(6, 69, 173, 0.08);
+  --green: #14866d;
+  --green-dim: rgba(20, 134, 109, 0.1);
+  --yellow: #72777d;
+  --yellow-dim: rgba(0, 0, 0, 0.06);
+  --purple: #72777d;
+  --orange: #72777d;
+  --red: #d33;
+  --positive: #14866d;
+  --negative: #d33;
+  --highlight: #202122;
+  --mono: Georgia, 'Times New Roman', Times, serif;
+  --sans: Georgia, 'Times New Roman', Times, serif;
+  --font-size: 13px;
+  --line-height: 1.5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--sans);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* Selection */
+::selection { background: var(--accent-dim); color: var(--text-bright); }
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:visited { color: #551a8b; }

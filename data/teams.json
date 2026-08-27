@@ -1,0 +1,227 @@
+[
+  {
+    "id": "t1",
+    "name": "치바비 리얼 스타스 FC",
+    "shortName": "치바비",
+    "displayName": "치바비 리얼 스타스",
+    "nameEn": "Chibavi Real Stars FC",
+    "shortNameEn": "Chibavi",
+    "displayNameEn": "Chibavi Real Stars",
+    "venue": {
+      "nameKo": "치바비 그라운드",
+      "nameEn": "Chibavi Ground",
+      "lat": -11.443131740663798,
+      "lng": 34.00202271076014
+    }
+  },
+  {
+    "id": "t2",
+    "name": "젠다 유나이티드 FC",
+    "shortName": "젠다",
+    "displayName": "젠다 유나이티드",
+    "nameEn": "Jenda United FC",
+    "shortNameEn": "Jenda",
+    "displayNameEn": "Jenda United",
+    "venue": {
+      "nameKo": "젠다 커뮤니티 그라운드",
+      "nameEn": "Jenda Community Ground",
+      "lat": -12.353220994618397,
+      "lng": 33.55134047659975
+    }
+  },
+  {
+    "id": "t3",
+    "name": "치주물루 유나이티드 FC",
+    "shortName": "치주물루",
+    "displayName": "치주물루 유나이티드",
+    "nameEn": "Chizumulu United FC",
+    "shortNameEn": "Chizumulu",
+    "displayNameEn": "Chizumulu United",
+    "venue": {
+      "nameKo": "치테코 커뮤니티 그라운드",
+      "nameEn": "Chiteko Community Ground",
+      "lat": -12.013520053363743,
+      "lng": 34.61472198075732
+    }
+  },
+  {
+    "id": "t4",
+    "name": "친테체 유나이티드 FC",
+    "shortName": "친테체",
+    "displayName": "친테체 유나이티드",
+    "nameEn": "Chintheche United FC",
+    "shortNameEn": "Chintheche",
+    "displayNameEn": "Chintheche United",
+    "venue": {
+      "nameKo": "친테체 그라운드",
+      "nameEn": "Chintheche Ground",
+      "lat": -11.82971083972567,
+      "lng": 34.1693308131396
+    }
+  },
+  {
+    "id": "t5",
+    "name": "칠룸바 배럭스 FC",
+    "shortName": "칠룸바",
+    "displayName": "칠룸바 배럭스",
+    "nameEn": "Chilumba Barracks FC",
+    "shortNameEn": "Chilumba",
+    "displayNameEn": "Chilumba Barracks",
+    "venue": {
+      "nameKo": "마잘리로 그라운드",
+      "nameEn": "Majaliro Ground",
+      "lat": -10.437859548225552,
+      "lng": 34.244529365527434
+    }
+  },
+  {
+    "id": "t6",
+    "name": "마푸 스타즈 FC",
+    "shortName": "마푸",
+    "displayName": "마푸 스타즈",
+    "nameEn": "Mafu Stars FC",
+    "shortNameEn": "Mafu",
+    "displayNameEn": "Mafu Stars",
+    "venue": {
+      "nameKo": "망캄비라 그라운드",
+      "nameEn": "Mankhambira Ground",
+      "lat": -11.722050060500038,
+      "lng": 34.296560298979976
+    }
+  },
+  {
+    "id": "t7",
+    "name": "음벨와 워리어스 FC",
+    "shortName": "음벨와",
+    "displayName": "음벨와 워리어스",
+    "nameEn": "M'mbelwa Warriors FC",
+    "shortNameEn": "M'mbelwa",
+    "displayNameEn": "M'mbelwa Warriors",
+    "venue": {
+      "nameKo": "치반자 그라운드",
+      "nameEn": "Chibanja Ground",
+      "lat": -11.459634955492291,
+      "lng": 34.00871941636782
+    }
+  },
+  {
+    "id": "t8",
+    "name": "치폴로폴로 보이즈 FC",
+    "shortName": "치폴로폴로",
+    "displayName": "치폴로폴로 보이즈",
+    "nameEn": "Chipolopolo Boys FC",
+    "shortNameEn": "Chipolopolo",
+    "displayNameEn": "Chipolopolo Boys",
+    "venue": {
+      "nameKo": "루지 그라운드",
+      "nameEn": "Luzi Ground",
+      "lat": -10.996973616990681,
+      "lng": 33.95852479021444
+    }
+  },
+  {
+    "id": "t9",
+    "name": "에크웬데니 FC",
+    "shortName": "에크웬데니",
+    "displayName": "에크웬데니",
+    "nameEn": "Ekwendeni FC",
+    "shortNameEn": "Ekwendeni",
+    "displayNameEn": "Ekwendeni",
+    "venue": {
+      "nameKo": "에크웬데니 커뮤니티 그라운드",
+      "nameEn": "Ekwendeni Community Ground",
+      "lat": -11.361646682489035,
+      "lng": 33.878772291009554
+    }
+  },
+  {
+    "id": "t10",
+    "name": "루베 마스터즈 FC",
+    "shortName": "루베",
+    "displayName": "루베 마스터즈",
+    "nameEn": "Lube Masters FC",
+    "shortNameEn": "Lube",
+    "displayNameEn": "Lube Masters",
+    "venue": {
+      "nameKo": "치바비 그라운드",
+      "nameEn": "Chibavi Ground",
+      "lat": -11.443131740663798,
+      "lng": 34.00202271076014
+    }
+  },
+  {
+    "id": "t11",
+    "name": "치하메 올스타즈 FC",
+    "shortName": "치하메",
+    "displayName": "치하메 올스타즈",
+    "nameEn": "Chihame All Stars FC",
+    "shortNameEn": "Chihame",
+    "displayNameEn": "Chihame All Stars",
+    "venue": {
+      "nameKo": "마강가 그라운드",
+      "nameEn": "Maganga Ground",
+      "lat": -11.606119833712514,
+      "lng": 34.28363798021556
+    }
+  },
+  {
+    "id": "t12",
+    "name": "라이플리 FC",
+    "shortName": "라이플리",
+    "displayName": "라이플리",
+    "nameEn": "Raiply FC",
+    "shortNameEn": "Raiply",
+    "displayNameEn": "Raiply",
+    "venue": {
+      "nameKo": "라이플리 그라운드",
+      "nameEn": "Raiply Ground",
+      "lat": -11.872442758508145,
+      "lng": 33.79948562470589
+    }
+  },
+  {
+    "id": "t13",
+    "name": "에우티니 베테랑스 FC",
+    "shortName": "에우티니",
+    "displayName": "에우티니 베테랑스",
+    "nameEn": "Euthini Veterans FC",
+    "shortNameEn": "Euthini",
+    "displayNameEn": "Euthini Veterans",
+    "venue": {
+      "nameKo": "에우티니 그라운드",
+      "nameEn": "Euthini CDSS Ground",
+      "lat": -11.452676853336099,
+      "lng": 33.41946042830683
+    }
+  },
+  {
+    "id": "t14",
+    "name": "비전 S 아카데미",
+    "shortName": "비전",
+    "displayName": "비전 S 아카데미",
+    "nameEn": "Vision S Academy",
+    "shortNameEn": "Vision",
+    "displayNameEn": "Vision S Academy",
+    "venue": {
+      "nameKo": "보타닉 그라운드",
+      "nameEn": "Votanic Ground",
+      "lat": -11.396261544531715,
+      "lng": 34.00939476359461
+    }
+  },
+  {
+    "id": "t15",
+    "name": "루비리 FC",
+    "shortName": "루비리",
+    "displayName": "루비리",
+    "nameEn": "Luviri FC",
+    "shortNameEn": "Luviri",
+    "displayNameEn": "Luviri",
+    "venue": {
+      "nameKo": "루비리 그라운드",
+      "nameEn": "Luviri Ground",
+      "lat": -12.198627593817912,
+      "lng": 33.66767272397456
+    }
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "id": "nrfa-league-one",
+  "name": "NRFA 리그 원",
+  "nameEn": "NRFA League One",
+  "seasonId": "nrfa-2627",
+  "seasonName": "26/27 시즌",
+  "seasonNameEn": "26/27 Season",
+  "teamIds": [
+    "t1",
+    "t2",
+    "t3",
+    "t4",
+    "t5",
+    "t6",
+    "t7",
+    "t8",
+    "t9",
+    "t10",
+    "t11",
+    "t12",
+    "t13",
+    "t14",
+    "t15"
+  ],
+  "currentRound": 7,
+  "totalRounds": 15,
+  "teamsPerRound": 15,
+  "rules": {
+    "winPoints": 3,
+    "drawPoints": 1,
+    "lossPoints": 0,
+    "tiebreakers": [
+      {
+        "type": "goal_difference",
+        "priority": 1
+      },
+      {
+        "type": "goals_scored",
+        "priority": 2
+      }
+    ]
+  },
+  "targetTeamId": "t3",
+  "dataVersion": "nrfa-2627-R7-v1",
+  "modelVersion": "strength-v0.5.0",
+  "lastDataUpdate": "2026-08-27T06:56:34.448Z"
+}
