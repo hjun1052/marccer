@@ -409,6 +409,8 @@ input[type="range"]::-webkit-slider-thumb {
   gap: 8px;
 }
 .team-panel { }
+.team-panel-clickable { cursor: pointer; }
+.team-panel-clickable:hover { border-color: var(--accent); }
 .team-panel.target-panel { border-color: var(--accent); }
 .team-stats { font-size: 11px; }
 

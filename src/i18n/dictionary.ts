@@ -87,6 +87,9 @@ export const ko: Record<string, string> = {
   'Title Prob': '우승확률',
   'Avg Finish': '평균순위',
   'Form History': '최근폼',
+  'BACK TO ALL TEAMS': '전체 팀 목록으로',
+  'REMAINING FIXTURES': '남은 일정',
+  'No remaining fixtures.': '남은 일정 없음.',
 
   // --- Overview page ---
   'CURRENT STATUS': '현재상황',
