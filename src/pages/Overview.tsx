@@ -56,6 +56,20 @@ export default function Overview() {
     .filter((c) => c.classification === 'CRITICAL' || c.classification === 'HIGH')
     .slice(0, 5) ?? [];
 
+  // Our team's single most important upcoming match — the soonest match
+  // ranked highest by must-win classification (not just "next match", and
+  // not diluted by rival matches like the Critical Matches panel is).
+  const classificationRank: Record<string, number> = {
+    MUST_WIN: 0, WIN_PREFERRED: 1, DRAW_ACCEPTABLE: 2, DONT_LOSE: 3, LOW_IMPACT: 4,
+  };
+  const keyMatch = pathResult
+    ? [...pathResult.mustWinMatches].sort((a, b) => {
+        const rankDiff = (classificationRank[a.classification] ?? 9) - (classificationRank[b.classification] ?? 9);
+        return rankDiff !== 0 ? rankDiff : a.round - b.round;
+      })[0]
+    : undefined;
+  const keyMatchPrediction = keyMatch ? predictions.find((p) => p.matchId === keyMatch.matchId) : undefined;
+
   return (
     <div className="page">
       <h2>{t('OVERVIEW')} — {targetTeam ? pickTeamDisplay(targetTeam, lang) : t('Target Team')}</h2>
@@ -156,6 +170,39 @@ export default function Overview() {
             )}
           </div>
         </div>
+
+        {/* Our Key Match */}
+        {keyMatch && (
+          <div className="panel">
+            <h3>{t('OUR KEY MATCH')}</h3>
+            <div className="stat-row">
+              <span className="stat-label">R{keyMatch.round}</span>
+              <span className={`badge badge-${keyMatch.classification.toLowerCase().replace('_', '-')}`}>
+                {t(keyMatch.classification)}
+              </span>
+            </div>
+            <div className="status-desc" style={{ fontSize: 12, fontWeight: 600, margin: '4px 0' }}>
+              {keyMatch.homeTeamId === league.targetTeamId ? t('HOME') : t('AWAY')} {t('vs')} {getTeamName(teams, keyMatch.homeTeamId === league.targetTeamId ? keyMatch.awayTeamId : keyMatch.homeTeamId, lang)}
+            </div>
+            {keyMatch.reasons.map((r, i) => (
+              <div key={i} className="reason">{r}</div>
+            ))}
+            {keyMatchPrediction && (
+              <div className="stat-row" style={{ marginTop: 6 }}>
+                <span className="stat-label">{t('This match')}</span>
+                <span className="stat-value">
+                  {Math.round(keyMatchPrediction.homeWinProb * 100)}/{Math.round(keyMatchPrediction.drawProb * 100)}/{Math.round(keyMatchPrediction.awayWinProb * 100)}
+                </span>
+              </div>
+            )}
+            <div className="stat-row">
+              <span className="stat-label">{t('Title prob if win/draw/loss')}</span>
+              <span className="stat-value">
+                {Math.round(keyMatch.titleProbBeforeWin * 100)}/{Math.round(keyMatch.titleProbBeforeDraw * 100)}/{Math.round(keyMatch.titleProbBeforeLoss * 100)}%
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Points Chart */}
         <div className="panel chart-panel">

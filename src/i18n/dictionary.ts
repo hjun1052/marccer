@@ -529,4 +529,9 @@ export const ko: Record<string, string> = {
   'combos': '가지',
   'title probability ranges': '우승확률 범위',
   'No win/draw/loss split reaches that points total.': '그 승점에 도달하는 조합이 없음.',
+
+  // --- Overview: our key match card ---
+  'OUR KEY MATCH': '우리팀 중요경기',
+  'This match': '이 경기 승/무/패',
+  'Title prob if win/draw/loss': '이기면/비기면/지면 우승확률',
 };
