@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useData } from '../hooks/useData';
-import { getTeamName, slugify } from '../utils/helpers';
+import { getTeamName, pickTeamDisplay, slugify } from '../utils/helpers';
 import { findPaths } from '../engine/pathfinder';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { HoverInfo } from '../components/HoverInfo';
@@ -11,21 +11,53 @@ export default function PathFinder() {
   const { league, teams, standings, matches, strengths, simulation, simulationConfig } = useData();
   const { t, lang } = useI18n();
 
+  // Focus team: defaults to our own target team, but the same analysis
+  // (must-win matches, easiest/safest path, control index...) can be run
+  // from any other team's point of view by swapping targetTeamId — every
+  // downstream engine function already reads league.targetTeamId, so a
+  // shallow league override is all that's needed, no engine changes.
+  const [focusTeamId, setFocusTeamId] = useState(league.targetTeamId);
+  const isFocusOnUs = focusTeamId === league.targetTeamId;
+  const focusLeague = useMemo(
+    () => (isFocusOnUs ? league : { ...league, targetTeamId: focusTeamId }),
+    [league, focusTeamId, isFocusOnUs]
+  );
+
   const pathResult = useMemo(() => {
     if (!simulation) return null;
-    return findPaths(league, teams, standings, matches, strengths, simulationConfig);
-  }, [league, teams, standings, matches, strengths, simulation]);
+    return findPaths(focusLeague, teams, standings, matches, strengths, simulationConfig);
+  }, [focusLeague, teams, standings, matches, strengths, simulation, simulationConfig]);
 
   if (!pathResult) {
     return <div className="page"><h2>{t('PATH FINDER')}</h2><p>{t('Loading...')}</p></div>;
   }
 
-  const targetStanding = standings.find((s) => s.teamId === league.targetTeamId);
+  const targetStanding = standings.find((s) => s.teamId === focusTeamId);
   const topStanding = standings[0];
 
   return (
     <div className="page">
       <h2>{t('PATH FINDER')}</h2>
+
+      <div className="config-group" style={{ maxWidth: 320, marginBottom: 8 }}>
+        <label>{t('Focus Team')}</label>
+        <select
+          className="select-field"
+          value={focusTeamId}
+          onChange={(e) => setFocusTeamId(e.target.value)}
+        >
+          {teams.map((tm) => (
+            <option key={tm.id} value={tm.id}>
+              {pickTeamDisplay(tm, lang)}{tm.id === league.targetTeamId ? ` (${t('TARGET')})` : ''}
+            </option>
+          ))}
+        </select>
+        {!isFocusOnUs && (
+          <div className="status-desc">
+            {t('Viewing this analysis from another team\'s perspective — same engine, different target.')}
+          </div>
+        )}
+      </div>
 
       <SectionTabs
         sections={[

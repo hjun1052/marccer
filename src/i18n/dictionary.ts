@@ -224,6 +224,8 @@ export const ko: Record<string, string> = {
   'LEAGUE CONFIG (JSON)': '리그 설정 원본(JSON)',
 
   // --- Path Finder page ---
+  'Focus Team': '기준 팀',
+  "Viewing this analysis from another team's perspective — same engine, different target.": '다른 팀 기준으로 보는 중 — 엔진은 동일, 기준 팀만 다름.',
   'POSITION SUMMARY': '순위 요약',
   'Current Position': '현재 순위',
   'Max Possible Pts': '최대 가능 승점',
