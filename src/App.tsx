@@ -55,11 +55,10 @@ function App() {
   const { league, simulation, isLoading } = useData();
   const { lang, setLang, t } = useI18n();
 
-  const activeCategory: CategoryId = TABS.find((tab) => tab.id === activeTab)!.category;
-  const selectCategory = (cat: CategoryId) => {
-    const first = TABS.find((tab) => tab.category === cat);
-    if (first) setActiveTab(first.id);
-  };
+  // Mobile hamburger menu: closed -> category list -> tab list (drill-down).
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuCategory, setMobileMenuCategory] = useState<CategoryId | null>(null);
+  const closeMobileMenu = () => { setMobileMenuOpen(false); setMobileMenuCategory(null); };
 
   const renderPage = () => {
     switch (activeTab) {
@@ -89,6 +88,13 @@ function App() {
           <span className="app-name">marccer</span>
           <span className="app-league">{lang === 'en' ? (league.nameEn ?? league.name) : league.name}</span>
           <span className="app-season">{lang === 'en' ? (league.seasonNameEn ?? league.seasonName) : league.seasonName}</span>
+          <button
+            className="hamburger-btn"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+            aria-label="Menu"
+          >
+            ☰
+          </button>
         </div>
         <nav className="tab-nav">
           {TABS.map(tab => (
@@ -108,37 +114,46 @@ function App() {
             {lang === 'ko' ? 'EN' : '한국어'}
           </button>
         </nav>
-        <nav className="tab-nav-mobile">
-          <div className="category-row">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                className={`tab-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                onClick={() => selectCategory(cat.id)}
-              >
-                {t(cat.label)}
-              </button>
-            ))}
-            <button
-              className="tab-btn lang-toggle"
-              onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
-              title="Switch language"
-            >
-              {lang === 'ko' ? 'EN' : '한국어'}
-            </button>
+        {mobileMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+            <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
+              {mobileMenuCategory === null ? (
+                <>
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      className="mobile-menu-item"
+                      onClick={() => setMobileMenuCategory(cat.id)}
+                    >
+                      {t(cat.label)} ›
+                    </button>
+                  ))}
+                  <button
+                    className="mobile-menu-item"
+                    onClick={() => { setLang(lang === 'ko' ? 'en' : 'ko'); closeMobileMenu(); }}
+                  >
+                    {lang === 'ko' ? 'EN' : '한국어'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="mobile-menu-item mobile-menu-back" onClick={() => setMobileMenuCategory(null)}>
+                    ‹ {t(CATEGORIES.find((c) => c.id === mobileMenuCategory)!.label)}
+                  </button>
+                  {TABS.filter((tab) => tab.category === mobileMenuCategory).map((tab) => (
+                    <button
+                      key={tab.id}
+                      className={`mobile-menu-item ${activeTab === tab.id ? 'active' : ''}`}
+                      onClick={() => { setActiveTab(tab.id); closeMobileMenu(); }}
+                    >
+                      {t(tab.label)}
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
           </div>
-          <div className="subtab-row">
-            {TABS.filter((tab) => tab.category === activeCategory).map((tab) => (
-              <button
-                key={tab.id}
-                className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {t(tab.label)}
-              </button>
-            ))}
-          </div>
-        </nav>
+        )}
         <div className="app-meta">
           <span>{t('Data')}: {league.dataVersion}</span>
           <span>{t('Model')}: {league.modelVersion}</span>
