@@ -262,9 +262,12 @@ function analyzeMustWinMatches(
     let titleProbBeforeLoss = 0;
 
     try {
+      // 'home_win'/'away_win' are relative to the match's own home/away teams,
+      // not to the target — when the target plays away, a target win IS the
+      // match's "away_win", so the two must be swapped or these come out backwards.
       const baseConfig: SimulationConfig = { ...config, count: Math.min(500, config.count) };
       titleProbBeforeWin = simulateWithLockedOutcome(
-        league, teams, completedMatches, futureMatches, match, 'home_win',
+        league, teams, completedMatches, futureMatches, match, isHome ? 'home_win' : 'away_win',
         strengths, baseConfig
       );
       titleProbBeforeDraw = simulateWithLockedOutcome(
@@ -272,7 +275,7 @@ function analyzeMustWinMatches(
         strengths, baseConfig
       );
       titleProbBeforeLoss = simulateWithLockedOutcome(
-        league, teams, completedMatches, futureMatches, match, 'away_win',
+        league, teams, completedMatches, futureMatches, match, isHome ? 'away_win' : 'home_win',
         strengths, baseConfig
       );
     } catch {
