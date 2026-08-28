@@ -56,7 +56,8 @@ export function runBacktest(
   teams: Team[],
   matches: Match[],
   config: SimulationConfig,
-  startRound: number
+  startRound: number,
+  endRound: number = Infinity
 ): BacktestResult {
   const completed = matches
     .filter((m) => m.status === 'completed' && m.homeScore !== null && m.awayScore !== null)
@@ -66,7 +67,7 @@ export function runBacktest(
   const matchResults: BacktestMatchResult[] = [];
 
   for (const round of rounds) {
-    if (round < startRound) continue;
+    if (round < startRound || round > endRound) continue;
 
     const trainMatches = completed.filter((m) => m.round < round);
     if (trainMatches.length === 0) continue;
@@ -106,7 +107,7 @@ export function runBacktest(
   }
 
   const roundSummaries: BacktestRoundSummary[] = rounds
-    .filter((r) => r >= startRound)
+    .filter((r) => r >= startRound && r <= endRound)
     .map((round) => {
       const rm = matchResults.filter((m) => m.round === round);
       if (rm.length === 0) return null;

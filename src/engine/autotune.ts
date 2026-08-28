@@ -36,6 +36,10 @@ export const TUNABLE_RANGES: WeightRange[] = [
 // found are essentially random and would just be overfit to noise.
 export const MIN_BACKTEST_MATCHES = 20;
 
+// Need at least this many distinct graded rounds to carve off a held-out
+// validation slice — otherwise there's nothing left to search with.
+const MIN_ROUNDS_FOR_SPLIT = 3;
+
 export function randomWeights(base: SimulationConfig, rng: () => number): SimulationConfig {
   const next = { ...base };
   for (const r of TUNABLE_RANGES) {
@@ -49,10 +53,48 @@ export function scoreWeights(
   teams: Team[],
   matches: Match[],
   config: SimulationConfig,
-  startRound: number
+  startRound: number,
+  endRound: number = Infinity
 ): number {
-  const result = runBacktest(league, teams, matches, config, startRound);
+  const result = runBacktest(league, teams, matches, config, startRound, endRound);
   return result.overall.matches === 0 ? Infinity : result.overall.avgBrierScore;
+}
+
+export interface TrainValidationSplit {
+  searchStartRound: number;
+  searchEndRound: number;
+  holdoutStartRound: number;
+  holdoutEndRound: number;
+  searchMatches: number;
+  holdoutMatches: number;
+}
+
+// Last ~30% of graded rounds (min 1) held out as validation; everything
+// before that is fair game for the search. Round-based, not match-based, so
+// no round ever leaks between the two sets.
+export function planTrainValidationSplit(
+  league: League,
+  teams: Team[],
+  matches: Match[],
+  config: SimulationConfig,
+  startRound: number
+): TrainValidationSplit | null {
+  const full = runBacktest(league, teams, matches, config, startRound);
+  const rounds = full.roundSummaries.map((r) => r.round);
+  if (rounds.length < MIN_ROUNDS_FOR_SPLIT) return null;
+
+  const holdoutCount = Math.max(1, Math.floor(rounds.length * 0.3));
+  const searchRounds = rounds.slice(0, rounds.length - holdoutCount);
+  const holdoutRounds = rounds.slice(rounds.length - holdoutCount);
+
+  return {
+    searchStartRound: searchRounds[0],
+    searchEndRound: searchRounds[searchRounds.length - 1],
+    holdoutStartRound: holdoutRounds[0],
+    holdoutEndRound: holdoutRounds[holdoutRounds.length - 1],
+    searchMatches: full.roundSummaries.filter((r) => searchRounds.includes(r.round)).reduce((s, r) => s + r.matches, 0),
+    holdoutMatches: full.roundSummaries.filter((r) => holdoutRounds.includes(r.round)).reduce((s, r) => s + r.matches, 0),
+  };
 }
 
 // Simple mulberry32-style PRNG so a tuning run is reproducible from a seed.

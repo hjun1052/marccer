@@ -557,4 +557,11 @@ export const ko: Record<string, string> = {
   "Auto-tune searches for weights that score better on the walk-forward backtest — but with only a few dozen graded matches, a lower Brier score here is not strong evidence of real accuracy, it can just mean the search got lucky against this small sample. Nothing changes until you explicitly apply a result.":
     '자동 튜닝은 워크포워드 백테스트 점수가 더 좋은 가중치를 찾는 건데, 채점 가능한 경기가 몇십 개밖에 안 되는 지금은 Brier 점수가 낮게 나와도 진짜 정확해서가 아니라 이 작은 표본에서 운 좋게 걸린 것일 수 있음. 명시적으로 적용 누르기 전까진 아무것도 안 바뀜.',
   'RUN ANYWAY': '그래도 실행',
+  'Search range': '탐색 구간',
+  'Held-out validation range (never searched)': '검증 구간 (탐색에 안 씀)',
+  'Held-out validation score (current → best)': '검증 구간 점수 (현재 → 최선)',
+  'confirmed': '검증됨',
+  'not confirmed': '검증 안 됨',
+  'No improvement confirmed on held-out rounds — better search-range score alone is not enough to apply.':
+    '검증 구간에서는 개선이 확인 안 됨 — 탐색 구간 점수만 좋은 걸로는 적용 안 함.',
 };

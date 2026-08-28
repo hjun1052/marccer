@@ -4,7 +4,7 @@ import { createDefaultSimulationConfig } from '../types/index.ts';
 import type { SimulationConfig } from '../types/index.ts';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { runBacktest } from '../engine/backtest.ts';
-import { randomWeights, scoreWeights, mulberry32, MIN_BACKTEST_MATCHES, TUNABLE_RANGES } from '../engine/autotune.ts';
+import { randomWeights, scoreWeights, mulberry32, planTrainValidationSplit, MIN_BACKTEST_MATCHES, TUNABLE_RANGES } from '../engine/autotune.ts';
 import type { TunableWeightKey } from '../engine/autotune.ts';
 
 type WeightKey =
@@ -39,10 +39,12 @@ interface TuneState {
   running: boolean;
   trial: number;
   total: number;
-  baselineScore: number;
-  bestScore: number;
+  baselineScore: number; // search-range score
+  bestScore: number; // search-range score
   bestConfig: SimulationConfig;
   done: boolean;
+  holdoutBaselineScore: number | null; // held-out validation score, filled in once done
+  holdoutBestScore: number | null;
 }
 
 export default function ModelWeights() {
@@ -56,6 +58,11 @@ export default function ModelWeights() {
     [league, teams, matches, simulationConfig]
   );
   const hasEnoughData = backtestMatchCount >= MIN_BACKTEST_MATCHES;
+  const split = useMemo(
+    () => planTrainValidationSplit(league, teams, matches, simulationConfig, AUTOTUNE_START_ROUND),
+    [league, teams, matches, simulationConfig]
+  );
+  const canTune = hasEnoughData && split !== null;
 
   const [showAutotuneModal, setShowAutotuneModal] = useState(false);
   const [tune, setTune] = useState<TuneState | null>(null);
@@ -65,17 +72,25 @@ export default function ModelWeights() {
   useEffect(() => () => { cancelRef.current = true; }, []);
 
   const runAutotune = () => {
+    if (!split) return;
     cancelRef.current = false;
     const rng = mulberry32(Date.now() | 0);
-    const baselineScore = scoreWeights(league, teams, matches, simulationConfig, AUTOTUNE_START_ROUND);
+    const baselineScore = scoreWeights(league, teams, matches, simulationConfig, split.searchStartRound, split.searchEndRound);
     setTune({
       running: true, trial: 0, total: AUTOTUNE_TOTAL_TRIALS,
       baselineScore, bestScore: baselineScore, bestConfig: simulationConfig, done: false,
+      holdoutBaselineScore: null, holdoutBestScore: null,
     });
 
     const step = (trial: number, bestScore: number, bestConfig: SimulationConfig) => {
       if (cancelRef.current || trial >= AUTOTUNE_TOTAL_TRIALS) {
-        setTune((prev) => prev && { ...prev, running: false, done: true, trial, bestScore, bestConfig });
+        // Search is done — now check the found config against rounds it never saw.
+        const holdoutBaselineScore = scoreWeights(league, teams, matches, simulationConfig, split.holdoutStartRound, split.holdoutEndRound);
+        const holdoutBestScore = scoreWeights(league, teams, matches, bestConfig, split.holdoutStartRound, split.holdoutEndRound);
+        setTune((prev) => prev && {
+          ...prev, running: false, done: true, trial, bestScore, bestConfig,
+          holdoutBaselineScore, holdoutBestScore,
+        });
         return;
       }
       let curBest = bestScore;
@@ -83,7 +98,7 @@ export default function ModelWeights() {
       const batchEnd = Math.min(trial + AUTOTUNE_BATCH_SIZE, AUTOTUNE_TOTAL_TRIALS);
       for (let i = trial; i < batchEnd; i++) {
         const candidate = randomWeights(simulationConfig, rng);
-        const score = scoreWeights(league, teams, matches, candidate, AUTOTUNE_START_ROUND);
+        const score = scoreWeights(league, teams, matches, candidate, split.searchStartRound, split.searchEndRound);
         if (score < curBest) {
           curBest = score;
           curBestConfig = candidate;
@@ -92,6 +107,7 @@ export default function ModelWeights() {
       setTune({
         running: true, trial: batchEnd, total: AUTOTUNE_TOTAL_TRIALS,
         baselineScore, bestScore: curBest, bestConfig: curBestConfig, done: false,
+        holdoutBaselineScore: null, holdoutBestScore: null,
       });
       setTimeout(() => step(batchEnd, curBest, curBestConfig), AUTOTUNE_BATCH_DELAY_MS);
     };
@@ -179,14 +195,22 @@ export default function ModelWeights() {
           {t('Randomly samples weight combinations and scores each with the same walk-forward backtest as the BACKTEST tab (lower Brier score = better), keeping the best one found. This is a blind random search, not a real optimizer — it can only be as good as the data it\'s tested against.')}
         </p>
 
-        {!hasEnoughData ? (
+        {!canTune ? (
           <div className="mathematical-note" style={{ color: 'var(--red)' }}>
             ⚠ {t('Not enough graded matches yet')} ({backtestMatchCount} / {MIN_BACKTEST_MATCHES}) — {t('auto-tune is disabled until more rounds are played. With this little data, "the best" weights found would just be overfit to noise.')}
           </div>
         ) : !tune ? (
-          <button className="btn btn-sm btn-primary" onClick={() => setShowAutotuneModal(true)}>
-            {t('START AUTO-TUNE')}
-          </button>
+          <>
+            <div className="status-desc" style={{ marginBottom: 4 }}>
+              {t('Search range')}: {t('Round')} {split!.searchStartRound}–{split!.searchEndRound} ({split!.searchMatches} {t('matches')})
+            </div>
+            <div className="status-desc" style={{ marginBottom: 8 }}>
+              {t('Held-out validation range (never searched)')}: {t('Round')} {split!.holdoutStartRound}–{split!.holdoutEndRound} ({split!.holdoutMatches} {t('matches')})
+            </div>
+            <button className="btn btn-sm btn-primary" onClick={() => setShowAutotuneModal(true)}>
+              {t('START AUTO-TUNE')}
+            </button>
+          </>
         ) : (
           <>
             <div className="stat-row">
@@ -213,7 +237,16 @@ export default function ModelWeights() {
               <button className="btn btn-sm btn-remove" onClick={stopAutotune}>{t('STOP')}</button>
             ) : (
               <>
-                {tune.bestScore < tune.baselineScore ? (
+                {tune.holdoutBaselineScore !== null && tune.holdoutBestScore !== null && (
+                  <div className="stat-row">
+                    <span className="stat-label">{t('Held-out validation score (current → best)')}</span>
+                    <span className={`stat-value ${tune.holdoutBestScore < tune.holdoutBaselineScore ? 'positive' : 'negative'}`}>
+                      {tune.holdoutBaselineScore.toFixed(4)} → {tune.holdoutBestScore.toFixed(4)}
+                      {tune.holdoutBestScore < tune.holdoutBaselineScore ? ` (${t('confirmed')})` : ` (${t('not confirmed')})`}
+                    </span>
+                  </div>
+                )}
+                {tune.holdoutBestScore !== null && tune.holdoutBaselineScore !== null && tune.holdoutBestScore < tune.holdoutBaselineScore ? (
                   <table className="dense-table" style={{ marginTop: 8 }}>
                     <thead>
                       <tr><th>{t('Weight')}</th><th>{t('Current')}</th><th>{t('Best found')}</th></tr>
@@ -229,10 +262,10 @@ export default function ModelWeights() {
                     </tbody>
                   </table>
                 ) : (
-                  <div className="no-data">{t('No improvement found over the current weights in this run.')}</div>
+                  <div className="no-data">{t('No improvement confirmed on held-out rounds — better search-range score alone is not enough to apply.')}</div>
                 )}
                 <div className="override-buttons" style={{ marginTop: 8 }}>
-                  {tune.bestScore < tune.baselineScore && (
+                  {tune.holdoutBestScore !== null && tune.holdoutBaselineScore !== null && tune.holdoutBestScore < tune.holdoutBaselineScore && (
                     <button className="btn btn-sm btn-primary" onClick={applyAutotune}>{t('APPLY BEST FOUND')}</button>
                   )}
                   <button className="btn btn-sm" onClick={discardAutotune}>{t('DISCARD')}</button>
