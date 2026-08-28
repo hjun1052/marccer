@@ -115,7 +115,7 @@ export const ko: Record<string, string> = {
   'Impact': '영향도',
   'Class': '등급',
   'ROOTING GUIDE': '응원가이드',
-  'No rival matches next round, or still computing...': '다음 라운드에 남 경기 없거나 아직 계산중',
+  'No rival matches next round, or still computing...': '다음 라운드에 다른 팀 경기 없거나 아직 계산중',
   'Root For': '응원할 결과',
   'WIN': '승',
   'DRAW': '무',
@@ -238,7 +238,7 @@ export const ko: Record<string, string> = {
   'Draw Acceptable': '무승부 가능',
   'Win Preferred, Draw Acceptable': '승리 선호, 무 가능',
   'SAFEST PATH': '가장 안전한 경로',
-  'A path that minimizes reliance on rival mistakes and fragile conditions.': '상대가 삐끗해주길 바라는 상황을 최대한 줄인 경로.',
+  'A path that minimizes reliance on rival mistakes and fragile conditions.': '상대 실수에 기대는 상황을 최대한 줄인 경로.',
   'MUST-WIN ANALYSIS': '필승경기 분석',
   'MUST_WIN': '필승',
   'WIN_PREFERRED': '승리 선호',
@@ -265,10 +265,10 @@ export const ko: Record<string, string> = {
   // --- Path Finder+ page ---
   'FULL-SEASON MATCH RECOMMENDATIONS': '시즌 전체 경기 추천',
   "Every remaining match this season — target's own and every rival's — ranked by how much the outcome actually swings the target team's title probability. Sorted by impact (biggest swing first).":
-    '남은 경기 전부(우리팀+남 경기 다) 결과가 우승확률에 미치는 영향 큰 순으로 나열함.',
+    '남은 경기 전부(우리팀+상대팀 경기) 결과가 우승확률에 미치는 영향이 큰 순으로 정렬.',
   'ALL': '전체',
   'OWN MATCHES': '우리팀 경기',
-  'RIVAL MATCHES': '남 경기',
+  'RIVAL MATCHES': '상대팀 경기',
   'ALL ROUNDS': '전체 라운드',
   'Running locked-outcome simulations across the remaining season...': '남은 시즌 전체 돌리는중...',
   'No matches match this filter.': '이 조건에 맞는 경기 없음.',
@@ -376,7 +376,7 @@ export const ko: Record<string, string> = {
   'No backtested accuracy: predictions are not yet compared against actual outcomes to measure how well-calibrated they are. Treat probabilities as directionally meaningful, not precise.':
     '정확도 검증 안 됨: 예측이 실제 결과랑 비교돼서 검증된 적 없음. 확률 숫자는 방향성 정도로만 보고 정밀하다고 믿지 말 것.',
   'Second-leg projection is a placeholder: those fixtures are not officially scheduled yet, so exact rounds/dates will differ once published — only the pairings (who plays whom at which venue) are treated as certain.':
-    '2차전 예상은 임시값임: 아직 공식 대진 안 나와서 실제 발표되면 라운드/날짜는 달라짐 — 누가 어디서 붙는지 그 짝만 확정으로 침.',
+    '2차전 예상은 임시값임: 아직 공식 대진 안 나와서 실제 발표되면 라운드/날짜는 달라짐 — 누가 어디서 붙는지 그 짝만 확정으로 간주함.',
 
   // --- Methodology page (detailed numbers section) ---
   'Each team gets five ratings — overall, attack, defense, home-specific, away-specific — starting from a neutral baseline of 1000 and updated after every completed match with an Elo-style update:':
@@ -484,9 +484,9 @@ export const ko: Record<string, string> = {
   'Games remaining this season.': '이번 시즌 남은 경기수.',
   'Maximum possible final points if this team wins every remaining match.': '남은 경기 다 이기면 나오는 최대 승점.',
   "How much of the title race is in this team's own hands vs depending on other teams' results — 100% means winning out settles it alone.":
-    '우승 경쟁이 자력으로 결정되는 비중 vs 남 결과에 달린 비중 — 100%면 우리가 다 이기면 그걸로 끝난다는 뜻.',
+    '우승 경쟁이 자력으로 결정되는 비중 vs 상대 결과에 달린 비중 — 100%면 우리가 다 이기면 그걸로 끝난다는 뜻.',
   "Share of the title outcome decided purely by this team's own remaining results.": '우리팀 남은 경기 결과만으로 우승 여부가 정해지는 비중.',
-  "Share of the title outcome that depends on rival teams' results going the right way.": '남 결과가 잘 나와줘야 하는 비중.',
+  "Share of the title outcome that depends on rival teams' results going the right way.": '상대 결과가 유리하게 나와야 하는 비중.',
   'Exact Score': '정확한 스코어',
   'Compare With': '비교 대상',
   'None': '없음',
