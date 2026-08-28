@@ -187,6 +187,7 @@
   padding: 3px 6px; width: 100%;
 }
 .input-field:focus { outline: none; border-color: var(--accent); }
+.note-input { min-width: 100px; }
 .select-field {
   background: var(--bg); border: 1px solid var(--border);
   color: var(--text); font-size: 11px; font-family: var(--mono);
@@ -387,6 +388,13 @@ input[type="range"]::-webkit-slider-thumb {
   display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
 }
 
+/* --- Table Scroll (wide tables get their own horizontal scrollbar
+   instead of dragging the whole sticky header sideways) --- */
+.table-scroll { overflow-x: auto; max-width: 100%; }
+
+/* --- Debug/formula blocks: wrap instead of overflowing --- */
+.debug-block { white-space: pre-wrap; word-break: break-word; overflow-x: auto; max-width: 100%; }
+
 /* --- Matrix --- */
 .matrix-scroll { overflow-x: auto; }
 .matrix-table { min-width: 600px; }
@@ -526,6 +534,10 @@ input[type="range"]::-webkit-slider-thumb {
   .select-field, .input-field { padding: 7px 8px; font-size: 13px; }
   input[type="range"] { height: 8px; }
   input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; }
+
+  /* Wide tables scroll in their own box, not the whole sticky header */
+  .app-main { overflow-x: hidden; }
+  .note-input { min-width: 70px !important; width: 70px; }
 }
 
 /* --- Modal --- */

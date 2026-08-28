@@ -28,6 +28,7 @@ export default function Matches() {
           { id: 'scheduled', label: t('SCHEDULED'), content: (
       <div className="panel full-width">
         <h3>{t('SCHEDULED')} ({scheduled.length})</h3>
+        <div className="table-scroll">
         <table className="dense-table">
           <thead>
             <tr>
@@ -93,8 +94,8 @@ export default function Matches() {
                   <td>
                     <input
                       type="text"
-                      className="input-field"
-                      style={{ minWidth: 100, fontSize: 10 }}
+                      className="input-field note-input"
+                      style={{ fontSize: 10 }}
                       value={matchNotes[m.id] ?? ''}
                       onChange={(e) => setMatchNote(m.id, e.target.value)}
                       placeholder={t('Add a note...')}
@@ -105,11 +106,13 @@ export default function Matches() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
           ) },
           { id: 'completed', label: t('COMPLETED'), content: (
       <div className="panel full-width">
         <h3>{t('COMPLETED (most recent first, showing last 30)')}</h3>
+        <div className="table-scroll">
         <table className="dense-table">
           <thead>
             <tr>
@@ -147,8 +150,8 @@ export default function Matches() {
                   <td>
                     <input
                       type="text"
-                      className="input-field"
-                      style={{ minWidth: 100, fontSize: 10 }}
+                      className="input-field note-input"
+                      style={{ fontSize: 10 }}
                       value={matchNotes[m.id] ?? ''}
                       onChange={(e) => setMatchNote(m.id, e.target.value)}
                       placeholder={t('Add a note...')}
@@ -159,6 +162,7 @@ export default function Matches() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
           ) },
         ]}

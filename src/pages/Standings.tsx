@@ -13,6 +13,7 @@ export default function Standings() {
     <div className="page">
       <h2>{t('STANDINGS')}</h2>
       <div className="panel full-width">
+        <div className="table-scroll">
         <table className="dense-table standings-table">
           <thead>
             <tr>
@@ -88,6 +89,7 @@ export default function Standings() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="standings-legend">
