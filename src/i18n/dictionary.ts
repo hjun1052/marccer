@@ -26,6 +26,10 @@ export const ko: Record<string, string> = {
   'CONFIG': '설정',
   'CHART': '차트',
   'MATRIX': '매트릭스',
+  'STATUS': '현황',
+  'TIMELINE': '타임라인',
+  'ROUND RESULTS': '라운드별 결과',
+  'AUTO-TUNE': '자동 튜닝',
 
   // --- App header ---
   'Data': '데이터',

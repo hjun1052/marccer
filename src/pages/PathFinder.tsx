@@ -4,6 +4,7 @@ import { getTeamName, slugify } from '../utils/helpers';
 import { findPaths } from '../engine/pathfinder';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { HoverInfo } from '../components/HoverInfo';
+import { SectionTabs } from '../components/SectionTabs';
 import { interpretControlIndex } from '../utils/interpret.ts';
 
 export default function PathFinder() {
@@ -26,6 +27,9 @@ export default function PathFinder() {
     <div className="page">
       <h2>{t('PATH FINDER')}</h2>
 
+      <SectionTabs
+        sections={[
+          { id: 'status', label: t('STATUS'), content: (<>
       <div className="pathfinder-summary">
         <div className="panel">
           <h3>{t('POSITION SUMMARY')}</h3>
@@ -166,7 +170,8 @@ export default function PathFinder() {
           </table>
         </div>
       </div>
-
+      </>) },
+          { id: 'mustwin', label: t('MUST-WIN ANALYSIS'), content: (<>
       {/* MUST-WIN Analysis */}
       <div className="panel full-width">
         <h3>{t('MUST-WIN ANALYSIS')}</h3>
@@ -228,6 +233,9 @@ export default function PathFinder() {
           </table>
         </div>
       )}
+      </>) },
+        ]}
+      />
     </div>
   );
 }

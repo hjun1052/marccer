@@ -4,6 +4,7 @@ import { createDefaultSimulationConfig } from '../types/index.ts';
 import type { SimulationConfig } from '../types/index.ts';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { runBacktest } from '../engine/backtest.ts';
+import { SectionTabs } from '../components/SectionTabs';
 import { randomWeights, scoreWeights, mulberry32, planTrainValidationSplit, MIN_BACKTEST_MATCHES, TUNABLE_RANGES } from '../engine/autotune.ts';
 import type { TunableWeightKey } from '../engine/autotune.ts';
 
@@ -177,6 +178,9 @@ export default function ModelWeights() {
     <div className="page">
       <h2>{t('MODEL WEIGHTS')}</h2>
 
+      <SectionTabs
+        sections={[
+          { id: 'info', label: t('INFO'), content: (
       <div className="panel full-width" style={{ borderColor: 'var(--red)' }}>
         <h3 style={{ color: 'var(--red)' }}>⚠ {t('ADVANCED — UNVALIDATED')}</h3>
         <p className="path-description">
@@ -188,7 +192,8 @@ export default function ModelWeights() {
           </button>
         )}
       </div>
-
+          ) },
+          { id: 'autotune', label: t('AUTO-TUNE'), content: (<>
       <div className="panel full-width" style={{ borderColor: 'var(--red)' }}>
         <h3 style={{ color: 'var(--red)' }}>⚠ {t('AUTO-TUNE (EXPERIMENTAL)')}</h3>
         <p className="path-description">
@@ -303,7 +308,8 @@ export default function ModelWeights() {
           </div>
         </div>
       )}
-
+      </>) },
+          { id: 'weights', label: t('WEIGHTS'), content: (
       <div className="panel full-width">
         <h3>{t('WEIGHTS')}</h3>
         {SPECS.map((spec) => {
@@ -328,6 +334,9 @@ export default function ModelWeights() {
           );
         })}
       </div>
+          ) },
+        ]}
+      />
     </div>
   );
 }

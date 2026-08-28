@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useData } from '../hooks/useData';
 import { getTeamName } from '../utils/helpers';
 import { useI18n } from '../i18n/I18nContext.tsx';
+import { SectionTabs } from '../components/SectionTabs';
 
 export default function History() {
   const { league, teams, matches } = useData();
@@ -54,7 +55,9 @@ export default function History() {
     <div className="page">
       <h2>{tt('HISTORY')}</h2>
 
-      {/* Target Team Form Timeline */}
+      <SectionTabs
+        sections={[
+          { id: 'timeline', label: tt('TIMELINE'), content: (
       <div className="panel full-width">
         <h3>{tt('TARGET TEAM SEASON TIMELINE')}</h3>
         <div className="timeline">
@@ -71,8 +74,8 @@ export default function History() {
           ))}
         </div>
       </div>
-
-      {/* Round-by-Round Results */}
+          ) },
+          { id: 'rounds', label: tt('ROUND RESULTS'), content: (
       <div className="panel full-width">
         <h3>{tt('ROUND RESULTS (newest first)')}</h3>
         {rounds.map(([round, roundMatches]) => (
@@ -116,6 +119,9 @@ export default function History() {
           </div>
         ))}
       </div>
+          ) },
+        ]}
+      />
     </div>
   );
 }
