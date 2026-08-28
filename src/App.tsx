@@ -85,9 +85,6 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="app-title">
-          <span className="app-name">marccer</span>
-          <span className="app-league">{lang === 'en' ? (league.nameEn ?? league.name) : league.name}</span>
-          <span className="app-season">{lang === 'en' ? (league.seasonNameEn ?? league.seasonName) : league.seasonName}</span>
           <button
             className="hamburger-btn"
             onClick={() => setMobileMenuOpen((o) => !o)}
@@ -95,6 +92,9 @@ function App() {
           >
             ☰
           </button>
+          <span className="app-name">marccer</span>
+          <span className="app-league">{lang === 'en' ? (league.nameEn ?? league.name) : league.name}</span>
+          <span className="app-season">{lang === 'en' ? (league.seasonNameEn ?? league.seasonName) : league.seasonName}</span>
         </div>
         <nav className="tab-nav">
           {TABS.map(tab => (

@@ -457,25 +457,25 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* --- Mobile hamburger menu (hamburger -> category -> tab drill-down) --- */
 .hamburger-btn {
-  display: none; margin-left: auto;
+  display: none;
   background: transparent; border: 1px solid var(--border); color: var(--text);
-  font-size: 16px; line-height: 1; padding: 4px 8px; cursor: pointer;
+  font-size: 20px; line-height: 1; padding: 6px 10px; cursor: pointer;
 }
 .mobile-menu-overlay {
   position: fixed; inset: 0; z-index: 1000;
   background: rgba(0, 0, 0, 0.5);
 }
 .mobile-menu-panel {
-  position: absolute; top: 0; right: 0;
-  width: 220px; max-width: 80vw; max-height: 100vh; overflow-y: auto;
-  background: var(--bg-panel); border-left: 1px solid var(--border);
+  position: absolute; top: 0; left: 0;
+  width: 70vw; max-width: 70vw; height: 100vh; overflow-y: auto;
+  background: var(--bg-panel); border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
 }
 .mobile-menu-item {
   display: block; width: 100%; text-align: left;
   background: transparent; border: none; border-bottom: 1px solid var(--border-light);
-  color: var(--text); font-size: 12px; font-family: var(--mono);
-  padding: 10px 12px; cursor: pointer;
+  color: var(--text); font-size: 16px; font-family: var(--mono);
+  padding: 18px 16px; cursor: pointer;
 }
 .mobile-menu-item:hover { background: var(--bg-hover); }
 .mobile-menu-item.active { color: var(--text-bright); background: var(--accent-dim); font-weight: 700; }
