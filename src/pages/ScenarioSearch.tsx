@@ -11,6 +11,8 @@ export default function ScenarioSearch() {
 
   const [result, setResult] = useState<TitleScenarioSearchResult | null>(null);
   const [isComputing, setIsComputing] = useState(false);
+  const [targetPointsInput, setTargetPointsInput] = useState('');
+  const [filterMode, setFilterMode] = useState<'exact' | 'atLeast'>('atLeast');
 
   // One locked sub-simulation per distinct win/draw/loss split (not per raw
   // combination), so this stays fast even though 3^n grows quickly.
@@ -35,6 +37,21 @@ export default function ScenarioSearch() {
     const best = result.buckets[0];
     return { viableCombos, guaranteedCombos, best };
   }, [result]);
+
+  const targetPoints = targetPointsInput.trim() === '' ? null : Number(targetPointsInput);
+  const filteredBuckets = useMemo(() => {
+    if (!result) return [];
+    if (targetPoints === null || Number.isNaN(targetPoints)) return result.buckets;
+    return result.buckets.filter((b) => (filterMode === 'exact' ? b.points === targetPoints : b.points >= targetPoints));
+  }, [result, targetPoints, filterMode]);
+
+  const filterSummary = useMemo(() => {
+    if (targetPoints === null || Number.isNaN(targetPoints) || filteredBuckets.length === 0) return null;
+    const totalCombos = filteredBuckets.reduce((sum, b) => sum + b.comboCount, 0);
+    const minProb = Math.min(...filteredBuckets.map((b) => b.titleProbability));
+    const maxProb = Math.max(...filteredBuckets.map((b) => b.titleProbability));
+    return { totalCombos, minProb, maxProb };
+  }, [filteredBuckets, targetPoints]);
 
   if (!simulation) {
     return <div className="page"><h2>{t('SCENARIO SEARCH')}</h2><p>{t('Loading...')}</p></div>;
@@ -61,8 +78,44 @@ export default function ScenarioSearch() {
           </div>
         )}
 
+        <div className="sim-config" style={{ marginTop: 8, marginBottom: 8 }}>
+          <div className="config-group">
+            <label>{t('Target Points')}</label>
+            <input
+              type="number"
+              className="input-field"
+              style={{ width: 90 }}
+              value={targetPointsInput}
+              onChange={(e) => setTargetPointsInput(e.target.value)}
+              placeholder={t('e.g. 60')}
+            />
+          </div>
+          <div className="config-group">
+            <label>{t('Condition')}</label>
+            <select className="select-field" value={filterMode} onChange={(e) => setFilterMode(e.target.value as 'exact' | 'atLeast')}>
+              <option value="atLeast">{t('This many points or more')}</option>
+              <option value="exact">{t('Exactly this many points')}</option>
+            </select>
+          </div>
+          {targetPointsInput.trim() !== '' && (
+            <button className="btn btn-sm" onClick={() => setTargetPointsInput('')}>{t('CLEAR')}</button>
+          )}
+        </div>
+
+        {filterSummary && (
+          <div className="scenario-instructions">
+            {filterMode === 'exact'
+              ? t('Splits landing on exactly this points total')
+              : t('Splits reaching at least this points total')}
+            : {filterSummary.totalCombos.toLocaleString()} {t('combos')} ·{' '}
+            {t('title probability ranges')} {(filterSummary.minProb * 100).toFixed(1)}%–{(filterSummary.maxProb * 100).toFixed(1)}%
+          </div>
+        )}
+
         {isComputing || !result ? (
           <div className="no-data">{t('Running one simulation per win/draw/loss split...')}</div>
+        ) : filteredBuckets.length === 0 ? (
+          <div className="no-data">{t('No win/draw/loss split reaches that points total.')}</div>
         ) : (
           <table className="dense-table">
             <thead>
@@ -74,7 +127,7 @@ export default function ScenarioSearch() {
               </tr>
             </thead>
             <tbody>
-              {result.buckets.map((b) => (
+              {filteredBuckets.map((b) => (
                 <tr key={`${b.wins}-${b.draws}-${b.losses}`} className={b.titleProbability >= 0.999 ? 'target-row' : ''}>
                   <td>{b.wins}{t('W')} {b.draws}{t('D')} {b.losses}{t('L')}</td>
                   <td className="points-cell">{b.points}</td>

@@ -517,4 +517,16 @@ export const ko: Record<string, string> = {
   // --- Match notes ---
   'Note': '메모',
   'Add a note...': '메모 남기기',
+
+  // --- Scenario Search: target points filter ---
+  'Target Points': '목표 승점',
+  'e.g. 60': '예: 60',
+  'This many points or more': '이 승점 이상',
+  'Exactly this many points': '정확히 이 승점',
+  'CLEAR': '초기화',
+  'Splits landing on exactly this points total': '정확히 이 승점인 조합',
+  'Splits reaching at least this points total': '이 승점 이상 되는 조합',
+  'combos': '가지',
+  'title probability ranges': '우승확률 범위',
+  'No win/draw/loss split reaches that points total.': '그 승점에 도달하는 조합이 없음.',
 };
