@@ -344,13 +344,13 @@ export const ko: Record<string, string> = {
   'Each team gets five ratings — overall, attack, defense, home-specific, away-specific — starting from a neutral baseline and updated after every completed match using an Elo-style formula: rating changes by K × (actual result − expected result), where expected result comes from the two teams\' rating gap. Attack/defense ratings additionally weigh in how many goals were actually scored/conceded relative to the league\'s average. Home/away ratings only update from that venue\'s own matches, so a team\'s home rating is not influenced by its away form.':
     '팀마다 종합/공격/수비/홈전용/원정전용 이렇게 레이팅 5개 굴림. 다 중립값에서 시작해서 경기 끝날 때마다 Elo식으로 갱신: 변화량 = K × (실제결과 − 기대결과), 기대결과는 두 팀 레이팅 차이로 뽑음. 공격/수비 레이팅은 리그 평균 대비 실제 득실도 같이 봄. 홈/원정 레이팅은 각자 그 장소 경기에서만 움직여서, 홈 레이팅이 원정 폼 때문에 흔들리진 않음.',
   'Small-sample correction: a team with only 1-2 games played has its rating pulled most of the way back toward neutral (empirical-Bayes shrinkage), so a single early upset can\'t swing a rating as if it were a settled trend. This loosens automatically as more games are played.':
-    '소표본 보정: 1~2경기밖에 안 뛴 팀은 레이팅이 중립값 쪽으로 대부분 당겨짐(empirical-Bayes shrinkage). 시즌 초반 이변 하나로 레이팅이 확 튀는 거 막으려는 장치임. 경기수 쌓이면 이 보정은 알아서 풀림.',
+    '소표본 보정: 1~2경기밖에 뛰지 않은 팀은 레이팅이 중립값 쪽으로 대부분 당겨짐(empirical-Bayes shrinkage). 시즌 초반 이변 하나로 레이팅이 급변하는 것을 막기 위한 장치임. 경기수가 쌓이면 이 보정은 자동으로 약해짐.',
   '2. MATCH PREDICTION': '2. 경기 예측',
   'For a given match, each team\'s attack/defense rating is blended with its recent form (last 5 results), then converted into expected goals for each side using this season\'s actual average goals scored at home vs away (not a guessed constant) and each team\'s own home/away strength split. Those two expected-goals numbers become the parameters of two Poisson distributions — one for each side\'s goal count — which are combined into a full scoreline probability grid, then adjusted with a Dixon-Coles correction (the four low-score cells: 0-0, 1-0, 0-1, 1-1) because real match results cluster at low scores a bit more than independent Poisson processes predict. Win/draw/loss probabilities are read off that grid.':
-    '경기 하나 예측할 땐, 양팀 공격/수비 레이팅에 최근폼(최근 5경기) 섞은 다음, 이번 시즌 실측 홈/원정 평균득점(대충 잡은 상수 아님)이랑 팀별 홈/원정 전력차를 곱해서 기대득점으로 바꿈. 이 기대득점 두 개가 각각 포아송 분포 파라미터 됨 — 두 분포 합쳐서 스코어별 확률표 만들고, Dixon-Coles 보정(저득점 4칸: 0-0/1-0/0-1/1-1) 얹음. 실제 축구는 독립 포아송보다 저득점 스코어가 좀 더 자주 나와서 그럼. 승/무/패 확률은 이 표에서 그대로 뽑음.',
+    '경기를 예측할 때는 양팀의 공격/수비 레이팅에 최근 폼(최근 5경기)을 반영한 다음, 이번 시즌 실측 홈/원정 평균득점(임의로 정한 상수가 아님)과 팀별 홈/원정 전력차를 곱해 기대득점으로 변환함. 이 기대득점 두 값이 각각 포아송 분포의 파라미터가 되며, 두 분포를 결합해 스코어별 확률표를 만든 뒤 Dixon-Coles 보정(저득점 4칸: 0-0/1-0/0-1/1-1)을 적용함. 실제 축구는 독립 포아송 모델보다 저득점 스코어가 조금 더 자주 나오기 때문임. 승/무/패 확률은 이 표에서 그대로 산출함.',
   '3. SEASON SIMULATION': '3. 시즌 시뮬레이션',
   'Starting from the real current standings, the simulator plays out every remaining scheduled match repeatedly (the simulation count is configurable in the Simulations tab, default 10,000 runs) with a seeded random number generator — each run draws a result for every remaining match according to that match\'s predicted probabilities, then computes final standings. Title probability, projected final position, and every other season-level number is just how often each outcome happened across all those runs.':
-    '실제 현재 순위표에서 시작해서 남은 경기 전부를 시드 고정 난수로 반복해서 끝까지 돌림(반복횟수는 SIMULATIONS 탭에서 조절 가능, 기본 10,000회). 매 회차마다 각 경기 예측확률대로 결과 뽑고 최종순위 계산함. 우승확률이나 예상 최종순위 같은 숫자들은 전부 이 반복 전체에서 그 결과가 나온 비율일 뿐임.',
+    '실제 현재 순위표에서 시작해, 시드 고정 난수로 남은 경기 전부를 반복 시뮬레이션함(반복 횟수는 SIMULATIONS 탭에서 조절 가능, 기본 10,000회). 매 회차마다 각 경기의 예측확률에 따라 결과를 뽑고 최종순위를 계산함. 우승확률, 예상 최종순위 등 시즌 단위 수치는 모두 전체 반복 중 해당 결과가 나온 비율임.',
   '4. FINAL STANDINGS RULES': '4. 최종순위 규칙',
   'Points and tiebreakers follow this league\'s actual configured rules (win/draw/loss points, tiebreaker order) shown in the Data tab — the engine supports goal difference, goals scored, and head-to-head tiebreakers, but only applies the ones this league has actually configured.':
     '승점, 동점자 처리는 DATA 탭에 나온 이 리그 실제 규칙 그대로 따름 — 엔진은 득실차/다득점/상대전적 다 지원하는데, 이 리그가 실제로 설정해둔 것만 씀.',
@@ -362,19 +362,19 @@ export const ko: Record<string, string> = {
     '시즌 전체 레이팅 대비 최근폼을 얼마나 반영할지, 레이팅을 평균 쪽으로 당길지 밀어낼지 정함.',
   'How much recent form (last 5 games) is blended into attack/defense ratings when predicting a match.': '예측할 때 공격/수비 레이팅에 최근폼(5경기) 섞는 비율.',
   'Whether home-field advantage and each team\'s own home/away performance split are applied at all — off treats every match as a neutral venue.':
-    '홈 이점이랑 팀별 홈/원정 실적차 반영할지 여부 — 끄면 전부 중립구장 취급.',
+    '홈 이점과 팀별 홈/원정 실적차를 반영할지 여부 — 끄면 모든 경기를 중립구장으로 취급함.',
   'This league is a home-and-away double round-robin, but only the first-leg fixtures are officially published. Turning this on projects the certain-to-happen return fixtures (same pairings, venue swapped) so the title race is modeled over the full season instead of stopping at the last published round.':
-    '이 리그는 홈/원정 두 번씩 붙는 더블 라운드로빈인데 지금은 1차전 대진만 나온 상태임. 켜면 확실히 일어날 2차전(같은 대진, 홈/원정만 바뀜)까지 예상해서 넣어서 마지막 발표 라운드에서 뚝 끊기지 않고 시즌 전체로 계산함.',
+    '이 리그는 홈/원정으로 두 번씩 맞붙는 더블 라운드로빈이지만, 현재는 1차전 대진만 발표된 상태임. 이 옵션을 켜면 확정적으로 열릴 2차전(같은 대진, 홈/원정만 반대)까지 반영해, 마지막 발표 라운드에서 끊기지 않고 시즌 전체를 계산함.',
   'KNOWN LIMITATIONS': '알려진 한계',
-  'This is a transparent statistical model, not a validated forecasting tool — read the numbers accordingly:': '검증된 예측기가 아니라 계산과정 다 공개한 통계 모델일 뿐임 — 숫자 볼 때 감안할 것:',
+  'This is a transparent statistical model, not a validated forecasting tool — read the numbers accordingly:': '검증된 예측기가 아니라, 계산 과정을 전부 공개한 통계 모델임 — 숫자를 볼 때 이 점을 감안할 것:',
   'Small sample: only a handful of rounds have been played, so every rating carries real uncertainty. The shrinkage correction softens this but can\'t remove it — early-season numbers should be read as rough, not precise.':
-    '표본이 작음: 아직 몇 라운드 안 돼서 레이팅마다 불확실성이 실제로 큼. 소표본 보정으로 좀 눌러주긴 하는데 완전히는 못 없앰 — 시즌 초반 숫자는 대략적인 값으로 봐야 함.',
+    '표본이 작음: 아직 진행된 라운드가 적어 레이팅마다 불확실성이 큼. 소표본 보정으로 어느 정도 완화하지만 완전히 없애지는 못함 — 시즌 초반 수치는 대략적인 값으로 봐야 함.',
   'Untuned constants: the attack/defense update weights, the Dixon-Coles correlation value, and the form-blend weight are reasonable literature-typical values, not fitted to this specific league\'s data (there isn\'t enough of it yet to fit against).':
-    '검증 안 된 상수값: 공격/수비 가중치, Dixon-Coles 상관계수, 폼 블렌드 비율 다 논문에서 흔히 쓰는 값 갖다 쓴 거지 이 리그 데이터로 피팅한 거 아님(피팅할 만큼 데이터가 없음).',
+    '검증되지 않은 상수값: 공격/수비 가중치, Dixon-Coles 상관계수, 폼 블렌드 비율은 문헌에서 흔히 쓰는 값을 그대로 사용한 것으로, 이 리그 데이터로 피팅한 값이 아님(피팅할 만큼의 데이터가 아직 없음).',
   'No external factors: injuries, suspensions, transfers, weather, and travel are not modeled at all — only match scores.':
-    '외부요인 안 봄: 부상, 징계, 이적, 날씨, 이동거리 전부 모델에 안 들어감 — 경기 스코어만 봄.',
+    '외부요인 미반영: 부상, 징계, 이적, 날씨, 이동거리는 모델에 전혀 반영되지 않음 — 경기 스코어만 사용함.',
   'No backtested accuracy: predictions are not yet compared against actual outcomes to measure how well-calibrated they are. Treat probabilities as directionally meaningful, not precise.':
-    '정확도 검증 안 됨: 예측이 실제 결과랑 비교돼서 검증된 적 없음. 확률 숫자는 방향성 정도로만 보고 정밀하다고 믿지 말 것.',
+    '정확도 미검증: 예측을 실제 결과와 비교해 검증한 적이 없음. 확률 수치는 방향성 정도로만 참고하고, 정밀한 값으로 신뢰하지 말 것.',
   'Second-leg projection is a placeholder: those fixtures are not officially scheduled yet, so exact rounds/dates will differ once published — only the pairings (who plays whom at which venue) are treated as certain.':
     '2차전 예상은 임시값임: 아직 공식 대진 안 나와서 실제 발표되면 라운드/날짜는 달라짐 — 누가 어디서 붙는지 그 짝만 확정으로 간주함.',
 
@@ -400,7 +400,7 @@ export const ko: Record<string, string> = {
   'Home/Away split': '홈/원정 특화',
   'No scheduled match available for a live example right now.': '지금 예시로 쓸 예정 경기가 없음.',
   "Starting from the real current standings, the simulator plays out every remaining scheduled match repeatedly with a seeded random number generator (mulberry32). For each run and each remaining match: a uniform random draw picks win/draw/loss according to that match's predicted probabilities, then the actual scoreline is sampled from a fixed goal-count distribution conditioned on that outcome (not from the Poisson grid directly — this second step only decides how many goals the winning/losing margin is, not the outcome itself):":
-    '실제 현재 순위표에서 시작해서 시드 고정 난수(mulberry32)로 남은 경기 전부 반복해서 끝까지 돌림. 매 회차·매 경기마다: 예측확률대로 난수 하나로 승/무/패 먼저 뽑고, 그 결과 조건에서 정해둔 득점수 분포로 실제 스코어 뽑음(포아송 표에서 바로 뽑는 거 아님 — 이 단계는 몇 골차인지만 정함):',
+    '실제 현재 순위표에서 시작해, 시드 고정 난수(mulberry32)로 남은 경기 전부를 반복 시뮬레이션함. 매 회차·매 경기마다: 예측확률에 따라 난수로 승/무/패를 먼저 결정하고, 해당 결과를 조건으로 정해둔 득점수 분포에서 실제 스코어를 산출함(포아송 표에서 직접 뽑는 것이 아니며, 이 단계는 골 차이만 결정함):',
   'Simulation count (this session)': '시뮬 횟수(이번 세션)',
   'Random seed (this session)': '랜덤 시드(이번 세션)',
   'Default simulation count': '기본 시뮬 횟수',
@@ -412,7 +412,7 @@ export const ko: Record<string, string> = {
     '엔진은 상대전적 승점/득실차/다득점 처리도 지원하는데, 위 규칙에 실제로 들어있을 때만 씀.',
   'Current value': '현재값',
   "Every simulated run recomputes final standings with the same points/tiebreaker rules as the real table. Title probability = (# runs where the target finishes 1st) / (total runs). Position probabilities, expected final points, and expected goal difference are the same kind of average across all runs.":
-    '매 회차마다 실제 순위표랑 똑같은 승점/동점자 규칙으로 최종순위 다시 계산함. 우승확률 = (우리팀이 1위로 끝난 회차) / (전체 회차). 순위확률, 예상승점, 예상득실차도 다 같은 방식의 평균임.',
+    '매 회차마다 실제 순위표와 동일한 승점/동점자 규칙으로 최종순위를 다시 계산함. 우승확률 = (우리팀이 1위로 끝난 회차 수) / (전체 회차 수). 순위확률, 예상승점, 예상득실차도 모두 같은 방식의 평균값임.',
 
   // --- Backtest page ---
   'BACKTEST': '백테스트',
@@ -421,7 +421,7 @@ export const ko: Record<string, string> = {
     '라운드 예측할 땐 그 라운드 이전 경기로만 팀 전력 계산하고 예측함 — 그 라운드나 그 뒤 결과는 절대 미리 안 봄. 이러면 미래 데이터 없이도 지금까지 있는 결과만으로 모델이 이 시즌 동안 얼마나 잘 맞혔는지 잴 수 있음.',
   'Starting from round': '시작 라운드',
   'rounds before this have too little training data to be a fair test (predicting off 0-2 games of history is close to a coin flip regardless of model quality).':
-    '이보다 이른 라운드는 학습 데이터가 너무 적어서 공정한 테스트가 안 됨(0~2경기 보고 예측하면 모델 성능이랑 상관없이 거의 동전던지기임).',
+    '이보다 이른 라운드는 학습 데이터가 너무 적어 공정한 테스트가 되지 않음(0~2경기만 보고 예측하면 모델 성능과 무관하게 거의 동전 던지기와 같음).',
   'Not enough completed matches yet to backtest from this round.': '이 라운드부터 돌리기엔 완료된 경기가 아직 부족함.',
   'OVERALL': '전체',
   'Matches tested': '테스트한 경기수',
@@ -429,12 +429,12 @@ export const ko: Record<string, string> = {
   'Avg Brier score (lower = better, 0 = perfect)': '평균 Brier 점수(낮을수록 좋음, 0=완벽)',
   'Naive baseline Brier score': '단순 기준선 Brier 점수',
   "Beats the naive baseline — the model is adding real signal over just guessing this league's average W/D/L rates.":
-    '단순 기준선보다 나음 — 이 리그 평균 승/무/패로 찍는 것보다 모델이 뭔가 진짜 더 맞히고 있다는 뜻.',
+    '단순 기준선보다 나음 — 리그 평균 승/무/패로 찍는 것보다 모델이 실제로 더 잘 맞히고 있다는 뜻.',
   "Does not beat the naive baseline yet — with this little data, guessing the league's average W/D/L rates does about as well or better. Read all probabilities on this site accordingly.":
-    '아직 단순 기준선도 못 이김 — 데이터가 이 정도로 적으면 그냥 리그 평균 승/무/패로 찍는 거랑 비슷하거나 더 나음. 이 사이트 확률들 볼 때 이거 감안할 것.',
-  'WHAT "NAIVE BASELINE" MEANS': '"단순 기준선"이 뭐냐면',
+    '아직 단순 기준선을 넘지 못함 — 데이터가 이 정도로 적으면 리그 평균 승/무/패로 찍는 것과 비슷하거나 더 나음. 이 사이트의 확률을 볼 때 이 점을 감안할 것.',
+  'WHAT "NAIVE BASELINE" MEANS': '"단순 기준선"이란',
   "Instead of the full model, the naive baseline always predicts this league's actual overall win/draw/loss rates (not 33/33/33 — home advantage alone beats a uniform guess). If the model can't beat this simple bar, its extra machinery (ratings, Poisson, Dixon-Coles) isn't earning its keep yet — usually because there isn't enough data to tell teams apart reliably.":
-    '단순 기준선은 모델 대신 이 리그 실제 승/무/패 비율을 그냥 예측값으로 씀(33/33/33 아니고, 홈이점만으로도 균등분포보다 나음). 모델이 이거 하나 못 넘으면 레이팅·포아송·Dixon-Coles 같은 장치들이 아직 제 몫 못 하는 거 — 대개 팀 실력차 가려낼 만큼 데이터가 안 쌓여서 그럼.',
+    '단순 기준선은 모델 대신 이 리그의 실제 승/무/패 비율을 그대로 예측값으로 사용함(33/33/33이 아니며, 홈이점만으로도 균등분포보다 나음). 모델이 이 기준을 넘지 못하면 레이팅·포아송·Dixon-Coles 같은 장치가 아직 제 역할을 못 하고 있다는 뜻임 — 대개는 팀 간 실력차를 가려낼 만큼 데이터가 쌓이지 않았기 때문임.',
   'BY ROUND': '라운드별',
   'Matches': '경기수',
   'Accuracy': '적중률',
@@ -449,13 +449,13 @@ export const ko: Record<string, string> = {
   // --- Backtest plain-language disclaimer ---
   'IN PLAIN TERMS': '요약하면',
   'Not enough finished matches yet to grade the predictions. Come back after a few more rounds.': '아직 채점할 만큼 끝난 경기가 없음. 몇 라운드 더 지나면 다시 볼 것.',
-  'This page grades our own predictions against what actually happened.': '이 페이지는 우리 예측을 실제 결과랑 비교해서 스스로 채점한 것임.',
+  'This page grades our own predictions against what actually happened.': '이 페이지는 우리 예측을 실제 결과와 비교해 채점함.',
   "So far the model beats just guessing this league's average results — a real (if early) signal that it's picking up something.":
-    '지금까지는 모델이 "리그 평균대로 찍기"보다 나음 — 아직 초반이지만 뭔가 잡아내고 있다는 신호임.',
+    '지금까지는 모델이 "리그 평균대로 찍기"보다 나음 — 아직 초반이지만 유의미한 신호를 포착하고 있다는 뜻임.',
   "So far the model does NOT beat just guessing this league's average results — it is not yet reliable. Treat every probability on this site as a rough guess, not a real forecast, until this page shows otherwise.":
-    '지금까지는 모델이 "리그 평균대로 찍기"보다 안 나음 — 아직 못 믿음. 이 페이지 결과 바뀌기 전까지 사이트 확률들은 그냥 대충 짐작 정도로만 볼 것.',
+    '지금까지는 모델이 "리그 평균대로 찍기"보다 낫지 않음 — 아직 신뢰하기 이름. 이 페이지의 결과가 바뀌기 전까지 사이트의 확률은 대략적인 추정치 정도로만 볼 것.',
   'This is based on only': '이건',
-  'graded matches so far — too few to trust either way. Check back as more rounds are played.': '경기만 채점한 거라 어느 쪽이든 믿기엔 너무 적음. 라운드 더 진행되면 다시 볼 것.',
+  'graded matches so far — too few to trust either way. Check back as more rounds are played.': '경기만 채점된 상태라 어느 쪽으로도 판단하기엔 너무 적음. 라운드가 더 진행되면 다시 볼 것.',
 
   // --- Travel fatigue toggle ---
   'Travel Fatigue': '이동 피로도',
@@ -465,7 +465,7 @@ export const ko: Record<string, string> = {
   'Off — travel distance has no effect': '꺼짐 — 이동거리 영향 없음',
   'EXPERIMENTAL FEATURE': '실험적 기능',
   'Travel Fatigue is a rough, untested model: it only uses straight-line distance between grounds (not travel time or road conditions), ignores rest days between away trips, and its penalty size (up to 10%) is a guessed constant, not fitted to real data. Turn it on knowing the numbers it changes are a guess layered on top of an already-uncalibrated model.':
-    '이동 피로도는 대충 만든 검증 안 된 모델임: 구장 간 직선거리만 보고(이동시간·도로사정 무시), 휴식일수도 안 보고, 페널티 크기(최대 10%)도 실측 아니고 그냥 감으로 잡은 값임. 이미 검증 안 된 모델 위에 추측 하나 더 얹는 거란 걸 알고 켤 것.',
+    '이동 피로도는 검증되지 않은 단순 모델임: 구장 간 직선거리만 반영하고(이동시간·도로사정은 무시), 원정 간 휴식일수는 고려하지 않으며, 페널티 크기(최대 10%)도 실측값이 아닌 추정값임. 이미 검증되지 않은 모델 위에 추정을 하나 더 얹는다는 점을 알고 켤 것.',
   'CANCEL': '취소',
   'ENABLE ANYWAY': '그래도 켜기',
 
@@ -505,7 +505,7 @@ export const ko: Record<string, string> = {
   'MODEL WEIGHTS': '모델 가중치',
   'ADVANCED — UNVALIDATED': '고급 — 검증 안 됨',
   "These are the raw constants the rating and prediction engine runs on. The defaults are reasonable literature-typical values, not fitted to this league's data (see the METHODOLOGY and BACKTEST tabs for why). Changing them changes every probability on this site — there is no guarantee a different value is more accurate, only different.":
-    '레이팅·예측 엔진 돌아가는 원본 상수값들임. 기본값은 자료에서 흔히 쓰는 값이지 이 리그 데이터로 피팅한 거 아님(이유는 METHODOLOGY·BACKTEST 탭 참고). 값 바꾸면 사이트 확률이 전부 바뀜 — 다른 값이 더 정확하단 보장은 없고 그냥 달라질 뿐임.',
+    '레이팅·예측 엔진이 사용하는 원본 상수값. 기본값은 문헌에서 흔히 쓰는 값이며, 이 리그 데이터로 피팅한 값은 아님(이유는 METHODOLOGY·BACKTEST 탭 참고). 값을 바꾸면 사이트의 모든 확률이 바뀜 — 다른 값이 더 정확하다는 보장은 없으며, 결과가 달라질 뿐임.',
   'RESET ALL TO DEFAULT': '전체 기본값으로',
   'WEIGHTS': '가중치',
   'default': '기본값',
@@ -527,7 +527,7 @@ export const ko: Record<string, string> = {
   '"Prior games" of neutral evidence baked in — higher pulls new/small-sample ratings harder back toward the league average.':
     '기본으로 깔아두는 "사전 경기수" — 높을수록 신생팀/소표본 레이팅을 리그평균 쪽으로 세게 당김.',
   'Low-score correlation correction. Negative values (typical for football) make 0-0/1-1 a bit more likely and 1-0/0-1 a bit less likely than independent Poisson would predict.':
-    '저득점 상관관계 보정값. 음수(축구에서 보통 이럼)면 0-0/1-1이 좀 더, 1-0/0-1이 좀 덜 나오게 만듦(독립 포아송 대비).',
+    '저득점 상관관계 보정값. 음수(축구에서는 보통 음수임)이면 0-0/1-1은 조금 더, 1-0/0-1은 조금 덜 나오게 만듦(독립 포아송 대비).',
   'Distance at which the travel fatigue effect (if enabled) reaches its maximum penalty.': '이동 피로도(켰을 때) 최대 페널티 도달 거리.',
   "Maximum fraction the away side's expected goals are reduced by, at or beyond the reference distance.": '기준거리 이상일 때 원정팀 예상득점 최대 감소폭.',
 
@@ -555,7 +555,7 @@ export const ko: Record<string, string> = {
   // --- Model Weights: auto-tune ---
   'AUTO-TUNE (EXPERIMENTAL)': '자동 튜닝 (실험적)',
   "Randomly samples weight combinations and scores each with the same walk-forward backtest as the BACKTEST tab (lower Brier score = better), keeping the best one found. This is a blind random search, not a real optimizer — it can only be as good as the data it's tested against.":
-    '가중치 조합을 무작위로 뽑아서 BACKTEST 탭이랑 똑같은 워크포워드 방식으로 채점하고(Brier 점수 낮을수록 좋음), 그중 제일 나은 걸 남김. 진짜 최적화 알고리즘이 아니라 그냥 무작위 탐색임 — 테스트하는 데이터가 부실하면 결과도 그만큼만 믿을 만함.',
+    '가중치 조합을 무작위로 뽑아 BACKTEST 탭과 동일한 워크포워드 방식으로 채점하고(Brier 점수가 낮을수록 좋음), 그중 가장 나은 조합을 남김. 실제 최적화 알고리즘이 아니라 무작위 탐색이므로 — 테스트 데이터가 부실하면 결과의 신뢰도도 그만큼만임.',
   'Not enough graded matches yet': '아직 채점 가능한 경기가 부족함',
   'auto-tune is disabled until more rounds are played. With this little data, "the best" weights found would just be overfit to noise.':
     '라운드가 더 진행될 때까지 자동 튜닝은 막아둠. 데이터가 이 정도로 적으면 "제일 나은" 가중치를 찾아도 그냥 노이즈에 과적합된 것에 불과함.',
@@ -572,7 +572,7 @@ export const ko: Record<string, string> = {
   'APPLY BEST FOUND': '최선값 적용',
   'DISCARD': '버리기',
   "Auto-tune searches for weights that score better on the walk-forward backtest — but with only a few dozen graded matches, a lower Brier score here is not strong evidence of real accuracy, it can just mean the search got lucky against this small sample. Nothing changes until you explicitly apply a result.":
-    '자동 튜닝은 워크포워드 백테스트 점수가 더 좋은 가중치를 찾는 건데, 채점 가능한 경기가 몇십 개밖에 안 되는 지금은 Brier 점수가 낮게 나와도 진짜 정확해서가 아니라 이 작은 표본에서 운 좋게 걸린 것일 수 있음. 명시적으로 적용 누르기 전까진 아무것도 안 바뀜.',
+    '자동 튜닝은 워크포워드 백테스트 점수가 더 좋은 가중치를 찾는 기능임. 채점 가능한 경기가 몇십 개밖에 안 되는 지금은 Brier 점수가 낮게 나와도 실제로 정확해서가 아니라 이 작은 표본에서 우연히 잘 맞았을 가능성이 있음. 명시적으로 적용을 누르기 전까지는 아무것도 바뀌지 않음.',
   'RUN ANYWAY': '그래도 실행',
   'Search range': '탐색 구간',
   'Held-out validation range (never searched)': '검증 구간 (탐색에 안 씀)',
