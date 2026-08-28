@@ -246,30 +246,38 @@ export default function ModelWeights() {
                     </span>
                   </div>
                 )}
-                {tune.holdoutBestScore !== null && tune.holdoutBaselineScore !== null && tune.holdoutBestScore < tune.holdoutBaselineScore ? (
-                  <table className="dense-table" style={{ marginTop: 8 }}>
-                    <thead>
-                      <tr><th>{t('Weight')}</th><th>{t('Current')}</th><th>{t('Best found')}</th></tr>
-                    </thead>
-                    <tbody>
-                      {TUNABLE_RANGES.map(({ key }) => (
-                        <tr key={key}>
-                          <td>{key}</td>
-                          <td>{(simulationConfig[key as TunableWeightKey] as number).toFixed(3)}</td>
-                          <td className="highlight">{(tune.bestConfig[key as TunableWeightKey] as number).toFixed(3)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="no-data">{t('No improvement confirmed on held-out rounds — better search-range score alone is not enough to apply.')}</div>
-                )}
-                <div className="override-buttons" style={{ marginTop: 8 }}>
-                  {tune.holdoutBestScore !== null && tune.holdoutBaselineScore !== null && tune.holdoutBestScore < tune.holdoutBaselineScore && (
-                    <button className="btn btn-sm btn-primary" onClick={applyAutotune}>{t('APPLY BEST FOUND')}</button>
-                  )}
-                  <button className="btn btn-sm" onClick={discardAutotune}>{t('DISCARD')}</button>
-                </div>
+                {(() => {
+                  const confirmed = tune.holdoutBestScore !== null && tune.holdoutBaselineScore !== null && tune.holdoutBestScore < tune.holdoutBaselineScore;
+                  return (
+                    <>
+                      {!confirmed && (
+                        <div className="no-data">{t('No improvement confirmed on held-out rounds — better search-range score alone is not enough to apply automatically.')}</div>
+                      )}
+                      <table className="dense-table" style={{ marginTop: 8 }}>
+                        <thead>
+                          <tr><th>{t('Weight')}</th><th>{t('Current')}</th><th>{t('Best found')}</th></tr>
+                        </thead>
+                        <tbody>
+                          {TUNABLE_RANGES.map(({ key }) => (
+                            <tr key={key}>
+                              <td>{key}</td>
+                              <td>{(simulationConfig[key as TunableWeightKey] as number).toFixed(3)}</td>
+                              <td className="highlight">{(tune.bestConfig[key as TunableWeightKey] as number).toFixed(3)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className="override-buttons" style={{ marginTop: 8 }}>
+                        {confirmed ? (
+                          <button className="btn btn-sm btn-primary" onClick={applyAutotune}>{t('APPLY BEST FOUND')}</button>
+                        ) : (
+                          <button className="btn btn-sm btn-remove" onClick={applyAutotune}>{t('APPLY ANYWAY (NOT VALIDATED)')}</button>
+                        )}
+                        <button className="btn btn-sm" onClick={discardAutotune}>{t('DISCARD')}</button>
+                      </div>
+                    </>
+                  );
+                })()}
               </>
             )}
           </>

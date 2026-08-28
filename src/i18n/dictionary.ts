@@ -562,6 +562,7 @@ export const ko: Record<string, string> = {
   'Held-out validation score (current → best)': '검증 구간 점수 (현재 → 최선)',
   'confirmed': '검증됨',
   'not confirmed': '검증 안 됨',
-  'No improvement confirmed on held-out rounds — better search-range score alone is not enough to apply.':
-    '검증 구간에서는 개선이 확인 안 됨 — 탐색 구간 점수만 좋은 걸로는 적용 안 함.',
+  'No improvement confirmed on held-out rounds — better search-range score alone is not enough to apply automatically.':
+    '검증 구간에서는 개선이 확인 안 됨 — 탐색 구간 점수만 좋은 걸론 자동 적용은 안 함.',
+  'APPLY ANYWAY (NOT VALIDATED)': '그래도 적용 (검증 안 됨)',
 };
