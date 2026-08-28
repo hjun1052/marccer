@@ -534,4 +534,27 @@ export const ko: Record<string, string> = {
   'OUR KEY MATCH': '우리팀 중요경기',
   'This match': '이 경기 승/무/패',
   'Title prob if win/draw/loss': '이기면/비기면/지면 우승확률',
+
+  // --- Model Weights: auto-tune ---
+  'AUTO-TUNE (EXPERIMENTAL)': '자동 튜닝 (실험적)',
+  "Randomly samples weight combinations and scores each with the same walk-forward backtest as the BACKTEST tab (lower Brier score = better), keeping the best one found. This is a blind random search, not a real optimizer — it can only be as good as the data it's tested against.":
+    '가중치 조합을 무작위로 뽑아서 BACKTEST 탭이랑 똑같은 워크포워드 방식으로 채점하고(Brier 점수 낮을수록 좋음), 그중 제일 나은 걸 남김. 진짜 최적화 알고리즘이 아니라 그냥 무작위 탐색임 — 테스트하는 데이터가 부실하면 결과도 그만큼만 믿을 만함.',
+  'Not enough graded matches yet': '아직 채점 가능한 경기가 부족함',
+  'auto-tune is disabled until more rounds are played. With this little data, "the best" weights found would just be overfit to noise.':
+    '라운드가 더 진행될 때까지 자동 튜닝은 막아둠. 데이터가 이 정도로 적으면 "제일 나은" 가중치를 찾아도 그냥 노이즈에 과적합된 것에 불과함.',
+  'START AUTO-TUNE': '자동 튜닝 시작',
+  'Progress': '진행률',
+  "Current weights' Brier score": '현재 가중치 Brier 점수',
+  'Best found so far': '지금까지 최선',
+  'better': '더 좋음',
+  'STOP': '중단',
+  'Weight': '가중치',
+  'Current': '현재',
+  'Best found': '최선값',
+  'No improvement found over the current weights in this run.': '이번엔 현재 가중치보다 나은 조합을 못 찾음.',
+  'APPLY BEST FOUND': '최선값 적용',
+  'DISCARD': '버리기',
+  "Auto-tune searches for weights that score better on the walk-forward backtest — but with only a few dozen graded matches, a lower Brier score here is not strong evidence of real accuracy, it can just mean the search got lucky against this small sample. Nothing changes until you explicitly apply a result.":
+    '자동 튜닝은 워크포워드 백테스트 점수가 더 좋은 가중치를 찾는 건데, 채점 가능한 경기가 몇십 개밖에 안 되는 지금은 Brier 점수가 낮게 나와도 진짜 정확해서가 아니라 이 작은 표본에서 운 좋게 걸린 것일 수 있음. 명시적으로 적용 누르기 전까진 아무것도 안 바뀜.',
+  'RUN ANYWAY': '그래도 실행',
 };
