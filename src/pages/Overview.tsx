@@ -1,11 +1,16 @@
+import { useEffect, useRef, useState } from 'react';
 import { useData } from '../hooks/useData';
 import { getTeamName, pickTeamShort, pickTeamDisplay } from '../utils/helpers';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { HoverInfo } from '../components/HoverInfo';
 import { interpretProbability, interpretGoalDiff, interpretMatchPrediction } from '../utils/interpret.ts';
+import { completedRoundsSoFar, computeTitleProbabilityAtRound } from '../engine/titleTrend.ts';
+import type { TitleTrendPoint } from '../engine/titleTrend.ts';
 import {
   BarChart,
   Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -18,9 +23,50 @@ import {
 
 const COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22', '#34495e', '#95a5a6', '#d35400'];
 
+// Reduced sim count for the trend chart — it needs one full season sim per
+// past round, so this trades some precision for not freezing the page.
+const TREND_SIM_COUNT = 2000;
+
 export default function Overview() {
-  const { league, teams, matches, standings, simulation, predictions, strengths, pathResult, rootingGuide, rootingRounds, rootingRound, setRootingRound } = useData();
+  const { league, teams, matches, standings, simulation, predictions, strengths, pathResult, rootingGuide, rootingRounds, rootingRound, setRootingRound, simulationConfig } = useData();
   const { t, lang } = useI18n();
+
+  // Title probability trend: no stored snapshots — retroactively rebuilds
+  // team strengths from only the matches known as of each past round (same
+  // idea as the BACKTEST tab) and re-simulates from there, one round per
+  // tick so it doesn't block the page.
+  const [trend, setTrend] = useState<TitleTrendPoint[]>([]);
+  const [trendComputing, setTrendComputing] = useState(false);
+  const trendCancelRef = useRef(false);
+
+  useEffect(() => {
+    trendCancelRef.current = false;
+    if (!simulation) return;
+    const rounds = completedRoundsSoFar(matches);
+    if (rounds.length < 2) {
+      setTrend([]);
+      return;
+    }
+    setTrendComputing(true);
+    setTrend([]);
+    const trendConfig = { ...simulationConfig, count: Math.min(simulationConfig.count, TREND_SIM_COUNT) };
+
+    const step = (i: number, acc: TitleTrendPoint[]) => {
+      if (trendCancelRef.current) return;
+      if (i >= rounds.length) {
+        setTrend(acc);
+        setTrendComputing(false);
+        return;
+      }
+      const point = computeTitleProbabilityAtRound(league, teams, matches, trendConfig, league.targetTeamId, rounds[i]);
+      const next = [...acc, point];
+      setTrend(next);
+      setTimeout(() => step(i + 1, next), 0);
+    };
+    setTimeout(() => step(0, []), 0);
+
+    return () => { trendCancelRef.current = true; };
+  }, [league, teams, matches, simulation, simulationConfig]);
 
   const targetStanding = standings.find((s) => s.teamId === league.targetTeamId);
   const targetTeam = teams.find((t) => t.id === league.targetTeamId);
@@ -243,6 +289,30 @@ export default function Overview() {
             </ResponsiveContainer>
           ) : (
             <div className="no-data">{t('No title probability data')}</div>
+          )}
+        </div>
+
+        {/* Title Probability Trend (retroactive, no stored snapshots) */}
+        <div className="panel chart-panel">
+          <h3>
+            <HoverInfo text={t('Not a historical log — recomputed from scratch for each past round using only the matches known at that point, same method as the BACKTEST tab. Uses a reduced simulation count for speed, so treat exact values as approximate.')}>
+              {t('TITLE PROBABILITY TREND')}
+            </HoverInfo>
+          </h3>
+          {trend.length >= 2 ? (
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={trend.map((p) => ({ round: `R${p.round}`, prob: Math.round(p.titleProbability * 1000) / 10 }))} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                <XAxis dataKey="round" tick={{ fontSize: 10, fill: '#aaa' }} />
+                <YAxis tick={{ fontSize: 10, fill: '#aaa' }} unit="%" />
+                <Tooltip contentStyle={{ background: '#1a1a1a', border: '1px solid #333', fontSize: 11 }} />
+                <Line type="monotone" dataKey="prob" stroke="#e74c3c" name={t('title probability')} dot={{ r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : trendComputing ? (
+            <div className="no-data">{t('Computing...')}</div>
+          ) : (
+            <div className="no-data">{t('Not enough completed rounds yet for a trend.')}</div>
           )}
         </div>
 

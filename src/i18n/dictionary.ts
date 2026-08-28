@@ -121,6 +121,11 @@ export const ko: Record<string, string> = {
   'DRAW': '무',
   'Swing': '영향폭',
   'TEAM STRENGTH ESTIMATES': '팀별 전력치',
+  'TITLE PROBABILITY TREND': '우승확률 추이',
+  'Not a historical log — recomputed from scratch for each past round using only the matches known at that point, same method as the BACKTEST tab. Uses a reduced simulation count for speed, so treat exact values as approximate.':
+    '실제 기록이 아니라, 각 과거 라운드 시점에 알려진 경기만으로 매번 다시 계산한 값임(BACKTEST 탭과 같은 방식). 속도를 위해 시뮬레이션 횟수를 줄여서 계산하므로 정확한 수치보다는 대략적인 추이로 볼 것.',
+  'Computing...': '계산중...',
+  'Not enough completed rounds yet for a trend.': '추이를 보기엔 완료된 라운드가 아직 부족함.',
 
   // --- Projection page ---
   'Loading simulation data...': '시뮬레이션 결과 불러오는중...',
