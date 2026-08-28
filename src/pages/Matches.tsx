@@ -2,6 +2,7 @@ import { useData } from '../hooks/useData';
 import { getTeamName } from '../utils/helpers';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { HoverInfo } from '../components/HoverInfo';
+import { SectionTabs } from '../components/SectionTabs';
 import { interpretMatchPrediction } from '../utils/interpret.ts';
 
 export default function Matches() {
@@ -22,6 +23,9 @@ export default function Matches() {
     <div className="page">
       <h2>{t('MATCHES')}</h2>
 
+      <SectionTabs
+        sections={[
+          { id: 'scheduled', label: t('SCHEDULED'), content: (
       <div className="panel full-width">
         <h3>{t('SCHEDULED')} ({scheduled.length})</h3>
         <table className="dense-table">
@@ -102,7 +106,8 @@ export default function Matches() {
           </tbody>
         </table>
       </div>
-
+          ) },
+          { id: 'completed', label: t('COMPLETED'), content: (
       <div className="panel full-width">
         <h3>{t('COMPLETED (most recent first, showing last 30)')}</h3>
         <table className="dense-table">
@@ -155,6 +160,9 @@ export default function Matches() {
           </tbody>
         </table>
       </div>
+          ) },
+        ]}
+      />
     </div>
   );
 }

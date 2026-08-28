@@ -3,6 +3,7 @@ import { useData } from '../hooks/useData';
 import { getTeamName } from '../utils/helpers';
 import type { ForecastAssumption } from '../types/index.ts';
 import { useI18n } from '../i18n/I18nContext.tsx';
+import { SectionTabs } from '../components/SectionTabs';
 import {
   BarChart,
   Bar,
@@ -63,7 +64,9 @@ export default function Simulations() {
     <div className="page">
       <h2>{t('SIMULATIONS')}</h2>
 
-      {/* Config Panel */}
+      <SectionTabs
+        sections={[
+          { id: 'config', label: t('CONFIG'), content: (
       <div className="panel full-width">
         <h3>{t('SIMULATION CONFIGURATION')}</h3>
         <div className="sim-config">
@@ -174,7 +177,8 @@ export default function Simulations() {
           </button>
         </div>
       </div>
-
+          ) },
+          { id: 'chart', label: t('CHART'), content: (<>
       {/* Results Summary */}
       <div className="sim-meta">
         <span>{t('Count')}: {simulation.config.count.toLocaleString()}</span>
@@ -251,8 +255,8 @@ export default function Simulations() {
           )}
         </ResponsiveContainer>
       </div>
-
-      {/* Full Results Table */}
+      </>) },
+          { id: 'results', label: t('RESULTS'), content: (
       <div className="panel full-width">
         <h3>{t('FULL SIMULATION RESULTS')}</h3>
         <table className="dense-table">
@@ -293,8 +297,8 @@ export default function Simulations() {
           </tbody>
         </table>
       </div>
-
-      {/* Position Distribution Detail */}
+          ) },
+          { id: 'matrix', label: t('MATRIX'), content: (
       <div className="panel full-width">
         <h3>{t('POSITION PROBABILITY MATRIX')}</h3>
         <div className="matrix-scroll">
@@ -343,6 +347,9 @@ export default function Simulations() {
           </table>
         </div>
       </div>
+          ) },
+        ]}
+      />
 
       {showTravelFatigueModal && (
         <div className="modal-overlay" onClick={() => setShowTravelFatigueModal(false)}>

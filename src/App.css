@@ -449,6 +449,17 @@ input[type="range"]::-webkit-slider-thumb {
 .legend-color.target { background: var(--accent); }
 .legend-color.relegation { background: var(--red); }
 
+/* --- Section Tabs (mobile content splitting) ---
+   Desktop: nav hidden, all panels shown stacked (unchanged legacy layout).
+   Mobile: nav shown, only the active panel is displayed. */
+.section-tabs-nav { display: none; gap: 2px; margin-bottom: 8px; flex-wrap: wrap; }
+.section-tabs-panel { display: block; }
+
+/* --- Mobile top nav (category -> subtab), hidden on desktop --- */
+.tab-nav-mobile { display: none; }
+.category-row { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: 4px; }
+.subtab-row { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: 4px; overflow-x: auto; }
+
 /* --- Responsive --- */
 @media (max-width: 1200px) {
   .whatif-layout {
@@ -458,6 +469,23 @@ input[type="range"]::-webkit-slider-thumb {
     max-height: none;
   }
   .pathfinder-paths {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .tab-nav { display: none; }
+  .tab-nav-mobile { display: block; }
+
+  .section-tabs-nav { display: flex; }
+  .section-tabs-panel { display: none; }
+  .section-tabs-panel.active { display: block; }
+
+  .app-title { flex-wrap: wrap; gap: 4px 12px; }
+  .app-meta { flex-wrap: wrap; gap: 4px 12px; }
+
+  .overview-grid, .teams-grid, .projection-grid,
+  .pathfinder-summary, .pathfinder-paths {
     grid-template-columns: 1fr;
   }
 }

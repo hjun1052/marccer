@@ -20,24 +20,33 @@ import Methodology from './pages/Methodology'
 import Backtest from './pages/Backtest'
 import ModelWeights from './pages/ModelWeights'
 
-const TABS = [
+const CATEGORIES = [
   { id: 'overview', label: 'OVERVIEW' },
-  { id: 'standings', label: 'STANDINGS' },
-  { id: 'matches', label: 'MATCHES' },
-  { id: 'teams', label: 'TEAMS' },
-  { id: 'projection', label: 'PROJECTION' },
-  { id: 'whatif', label: 'WHAT-IF LAB' },
-  { id: 'pathfinder', label: 'PATH FINDER' },
-  { id: 'pathfinderplus', label: 'PATH FINDER+' },
-  { id: 'scenariosearch', label: 'SCENARIO SEARCH' },
-  { id: 'simulations', label: 'SIMULATIONS' },
-  { id: 'history', label: 'HISTORY' },
+  { id: 'league', label: 'LEAGUE' },
+  { id: 'lab', label: 'LAB' },
   { id: 'data', label: 'DATA' },
-  { id: 'update', label: 'UPDATE DATA' },
-  { id: 'methodology', label: 'METHODOLOGY' },
-  { id: 'backtest', label: 'BACKTEST' },
-  { id: 'modelweights', label: 'MODEL WEIGHTS' },
 ] as const;
+
+type CategoryId = typeof CATEGORIES[number]['id'];
+
+const TABS = [
+  { id: 'overview', label: 'OVERVIEW', category: 'overview' },
+  { id: 'standings', label: 'STANDINGS', category: 'league' },
+  { id: 'matches', label: 'MATCHES', category: 'league' },
+  { id: 'teams', label: 'TEAMS', category: 'league' },
+  { id: 'history', label: 'HISTORY', category: 'league' },
+  { id: 'projection', label: 'PROJECTION', category: 'lab' },
+  { id: 'whatif', label: 'WHAT-IF LAB', category: 'lab' },
+  { id: 'pathfinder', label: 'PATH FINDER', category: 'lab' },
+  { id: 'pathfinderplus', label: 'PATH FINDER+', category: 'lab' },
+  { id: 'scenariosearch', label: 'SCENARIO SEARCH', category: 'lab' },
+  { id: 'simulations', label: 'SIMULATIONS', category: 'lab' },
+  { id: 'data', label: 'DATA', category: 'data' },
+  { id: 'update', label: 'UPDATE DATA', category: 'data' },
+  { id: 'methodology', label: 'METHODOLOGY', category: 'data' },
+  { id: 'backtest', label: 'BACKTEST', category: 'data' },
+  { id: 'modelweights', label: 'MODEL WEIGHTS', category: 'data' },
+] as const satisfies readonly { id: string; label: string; category: CategoryId }[];
 
 type TabId = typeof TABS[number]['id'];
 
@@ -45,6 +54,12 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const { league, simulation, isLoading } = useData();
   const { lang, setLang, t } = useI18n();
+
+  const activeCategory: CategoryId = TABS.find((tab) => tab.id === activeTab)!.category;
+  const selectCategory = (cat: CategoryId) => {
+    const first = TABS.find((tab) => tab.category === cat);
+    if (first) setActiveTab(first.id);
+  };
 
   const renderPage = () => {
     switch (activeTab) {
@@ -92,6 +107,37 @@ function App() {
           >
             {lang === 'ko' ? 'EN' : '한국어'}
           </button>
+        </nav>
+        <nav className="tab-nav-mobile">
+          <div className="category-row">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                className={`tab-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                onClick={() => selectCategory(cat.id)}
+              >
+                {t(cat.label)}
+              </button>
+            ))}
+            <button
+              className="tab-btn lang-toggle"
+              onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
+              title="Switch language"
+            >
+              {lang === 'ko' ? 'EN' : '한국어'}
+            </button>
+          </div>
+          <div className="subtab-row">
+            {TABS.filter((tab) => tab.category === activeCategory).map((tab) => (
+              <button
+                key={tab.id}
+                className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {t(tab.label)}
+              </button>
+            ))}
+          </div>
         </nav>
         <div className="app-meta">
           <span>{t('Data')}: {league.dataVersion}</span>

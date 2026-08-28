@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useData } from '../hooks/useData';
 import { getTeamName, pickTeamShort, pickTeamDisplay } from '../utils/helpers';
 import { useI18n } from '../i18n/I18nContext.tsx';
+import { SectionTabs } from '../components/SectionTabs';
 
 export default function Data() {
   const { league, teams, matches, standings, strengths, simulation } = useData();
@@ -34,6 +35,9 @@ export default function Data() {
     <div className="page">
       <h2>{t('DATA')}</h2>
 
+      <SectionTabs
+        sections={[
+          { id: 'info', label: t('INFO'), content: (<>
       {/* System Info */}
       <div className="panel full-width">
         <h3>{t('SYSTEM INFORMATION')}</h3>
@@ -97,6 +101,8 @@ export default function Data() {
         )}
       </div>
 
+      </>) },
+          { id: 'teams', label: t('TEAMS'), content: (<>
       {/* Teams Data */}
       <div className="panel full-width">
         <h3>{t('TEAMS')} ({teams.length})</h3>
@@ -180,6 +186,8 @@ export default function Data() {
         </table>
       </div>
 
+      </>) },
+          { id: 'matches', label: t('MATCHES'), content: (<>
       {/* Match Data */}
       <div className="panel full-width">
         <h3>{t('MATCH DATA')} ({matches.length} {t('matches')})</h3>
@@ -244,11 +252,15 @@ export default function Data() {
         </div>
       )}
 
-      {/* Raw JSON preview */}
+      </>) },
+          { id: 'raw', label: t('RAW JSON'), content: (
       <div className="panel full-width">
         <h3>{t('LEAGUE CONFIG (JSON)')}</h3>
         <pre className="mono debug-block">{JSON.stringify(league, null, 2)}</pre>
       </div>
+          ) },
+        ]}
+      />
     </div>
   );
 }

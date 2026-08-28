@@ -16,6 +16,16 @@ export const ko: Record<string, string> = {
   'HISTORY': '지난 기록',
   'DATA': '데이터',
   'UPDATE DATA': '데이터 갱신',
+  'LEAGUE': '리그',
+  'LAB': '연구실',
+  'CONTROLS': '설정',
+  'RESULTS': '결과',
+  'ANALYSIS': '분석',
+  'INFO': '정보',
+  'RAW JSON': '원본 JSON',
+  'CONFIG': '설정',
+  'CHART': '차트',
+  'MATRIX': '매트릭스',
 
   // --- App header ---
   'Data': '데이터',
@@ -44,6 +54,7 @@ export const ko: Record<string, string> = {
 
   // --- Matches page ---
   'SCHEDULED': '예정',
+  'COMPLETED': '완료',
   'R': '라운드',
   'Date': '날짜',
   'Home': '홈',

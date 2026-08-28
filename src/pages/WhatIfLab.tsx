@@ -3,6 +3,7 @@ import { useData } from '../hooks/useData';
 import { getTeamName, pickTeamShort, slugify } from '../utils/helpers';
 import type { ForecastAssumption } from '../types/index.ts';
 import { useI18n } from '../i18n/I18nContext.tsx';
+import { SectionTabs } from '../components/SectionTabs';
 import {
   BarChart,
   Bar,
@@ -190,8 +191,10 @@ export default function WhatIfLab() {
     <div className="page">
       <h2>{t('WHAT-IF LAB')}</h2>
 
-      <div className="whatif-layout">
-        {/* LEFT: Scenario Controls */}
+      <SectionTabs
+        className="whatif-layout"
+        sections={[
+          { id: 'controls', label: t('CONTROLS'), content: (
         <div className="whatif-left">
           <div className="panel">
             <h3>{t('SCENARIOS')}</h3>
@@ -448,8 +451,8 @@ export default function WhatIfLab() {
             </table>
           </div>
         </div>
-
-        {/* CENTER: Results */}
+          ) },
+          { id: 'results', label: t('RESULTS'), content: (
         <div className="whatif-center">
           {/* Active Overrides Summary */}
           {activeScenario && activeScenario.overrides.length > 0 && (
@@ -586,8 +589,8 @@ export default function WhatIfLab() {
             </div>
           )}
         </div>
-
-        {/* RIGHT: Analysis Panel */}
+          ) },
+          { id: 'analysis', label: t('ANALYSIS'), content: (
         <div className="whatif-right">
           {/* Title Probability */}
           {state && (
@@ -728,7 +731,9 @@ export default function WhatIfLab() {
             </button>
           </div>
         </div>
-      </div>
+          ) },
+        ]}
+      />
     </div>
   );
 }
