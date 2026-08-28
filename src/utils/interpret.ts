@@ -72,16 +72,33 @@ export function interpretStrength(rating: number, lang: Lang): string {
 
 interface MatchReasonFactor {
   gap: number; // signed: positive favors home, negative favors away
+  homeVal: number;
+  awayVal: number;
   homeKo: string;
   awayKo: string;
   homeEn: string;
   awayEn: string;
 }
 
+export interface TeamRecordSummary {
+  wins: number;
+  draws: number;
+  losses: number;
+  points: number;
+}
+
+export function formatRecord(r: TeamRecordSummary, lang: Lang): string {
+  return lang === 'en'
+    ? `${r.wins}W-${r.draws}D-${r.losses}L, ${r.points}pts`
+    : `${r.wins}승 ${r.draws}무 ${r.losses}패, ${r.points}점`;
+}
+
+const fmt1 = (n: number) => Math.round(n * 10) / 10;
+
 // Why the model leans the way it does for one match — picks the 1-2 biggest
-// gaps between the two teams (overall form, attack-vs-defense matchup, and
-// each side's own home/away split) and reads them off in a sentence, instead
-// of just restating the percentage.
+// gaps between the two teams (overall rating, attack-vs-defense matchup,
+// recent form, and each side's own home/away split), cites the actual
+// numbers behind them, and leads with each side's season record.
 export function interpretMatchPrediction(
   homeName: string,
   awayName: string,
@@ -90,18 +107,22 @@ export function interpretMatchPrediction(
   homeWinProb: number,
   drawProb: number,
   awayWinProb: number,
-  lang: Lang
+  lang: Lang,
+  homeRecord?: TeamRecordSummary,
+  awayRecord?: TeamRecordSummary
 ): string {
   const factors: MatchReasonFactor[] = [
     {
       gap: homeStr.overall - awayStr.overall,
-      homeKo: `${homeName} 종합 전력이 더 좋음`,
-      awayKo: `${awayName} 종합 전력이 더 좋음`,
+      homeVal: homeStr.overall, awayVal: awayStr.overall,
+      homeKo: `${homeName} 종합 전력 우위`,
+      awayKo: `${awayName} 종합 전력 우위`,
       homeEn: `${homeName} rate higher overall`,
       awayEn: `${awayName} rate higher overall`,
     },
     {
       gap: (homeStr.attack - awayStr.defense) - (awayStr.attack - homeStr.defense),
+      homeVal: homeStr.attack, awayVal: awayStr.defense,
       homeKo: `${homeName} 공격이 ${awayName} 수비보다 우위`,
       awayKo: `${awayName} 공격이 ${homeName} 수비보다 우위`,
       homeEn: `${homeName}'s attack matches up well against ${awayName}'s defense`,
@@ -109,13 +130,15 @@ export function interpretMatchPrediction(
     },
     {
       gap: homeStr.formRating - awayStr.formRating,
-      homeKo: `${homeName} 최근 폼이 더 좋음`,
-      awayKo: `${awayName} 최근 폼이 더 좋음`,
+      homeVal: homeStr.formRating, awayVal: awayStr.formRating,
+      homeKo: `${homeName} 최근 폼 우위`,
+      awayKo: `${awayName} 최근 폼 우위`,
       homeEn: `${homeName} are in better recent form`,
       awayEn: `${awayName} are in better recent form`,
     },
     {
       gap: homeStr.homeStrength - awayStr.awayStrength,
+      homeVal: homeStr.homeStrength, awayVal: awayStr.awayStrength,
       homeKo: `${homeName} 홈에서 특히 강함`,
       awayKo: `${awayName} 원정에서도 잘함`,
       homeEn: `${homeName} are especially strong at home`,
@@ -138,25 +161,39 @@ export function interpretMatchPrediction(
     : ranked.filter((f) => (favored === 'home' ? f.gap > 0 : f.gap < 0));
   const top = aligned.filter((f) => Math.abs(f.gap) >= 3).slice(0, 2);
 
-  const reasonText = (lang: Lang) =>
-    top.map((f) => (lang === 'en' ? (f.gap > 0 ? f.homeEn : f.awayEn) : (f.gap > 0 ? f.homeKo : f.awayKo))).join(lang === 'en' ? '; ' : ', ');
+  const factorPhrase = (f: MatchReasonFactor) =>
+    lang === 'en'
+      ? `${f.gap > 0 ? f.homeEn : f.awayEn} (${fmt1(f.homeVal)} vs ${fmt1(f.awayVal)})`
+      : `${f.gap > 0 ? f.homeKo : f.awayKo} (${fmt1(f.homeVal)} vs ${fmt1(f.awayVal)})`;
+
+  const reasonText = () => top.map(factorPhrase).join(lang === 'en' ? '; ' : ', ');
+
+  const recordLine =
+    homeRecord && awayRecord
+      ? (lang === 'en'
+          ? `${homeName} ${formatRecord(homeRecord, lang)} · ${awayName} ${formatRecord(awayRecord, lang)}\n`
+          : `${homeName} ${formatRecord(homeRecord, lang)} · ${awayName} ${formatRecord(awayRecord, lang)}\n`)
+      : '';
 
   if (favored === 'draw') {
-    return top.length === 0
+    const body = top.length === 0
       ? (lang === 'en' ? 'Close matchup — the two sides are rated closely across the board, so a draw is live too.' : '팽팽한 매치업 — 양팀 전력이 여러모로 비슷해서 무승부 가능성도 낮지 않음.')
-      : (lang === 'en' ? `Close matchup — ${reasonText(lang)}, so a draw is live too.` : `팽팽한 매치업 — ${reasonText(lang)}, 무승부 가능성도 낮지 않음.`);
+      : (lang === 'en' ? `Close matchup — ${reasonText()}, so a draw is live too.` : `팽팽한 매치업 — ${reasonText()}, 무승부 가능성도 낮지 않음.`);
+    return recordLine + body;
   }
   const winnerName = favored === 'home' ? homeName : awayName;
   if (top.length === 0) {
     // No individual stat clearly favors the pick (often just home-field edge
     // baked into the goal model) — say so honestly instead of forcing a reason.
-    return lang === 'en'
+    const body = lang === 'en'
       ? `${winnerName} favored, mainly on ${favored === 'home' ? 'home-field edge' : 'the matchup'} rather than any one standout stat.`
       : `${winnerName} 쪽 우세 — 특별히 두드러진 지표보단 ${favored === 'home' ? '홈 이점' : '매치업'} 영향이 큼.`;
+    return recordLine + body;
   }
-  return lang === 'en'
-    ? `${winnerName} favored: ${reasonText(lang)}.`
-    : `${winnerName} 쪽 우세: ${reasonText(lang)}.`;
+  const body = lang === 'en'
+    ? `${winnerName} favored: ${reasonText()}.`
+    : `${winnerName} 쪽 우세: ${reasonText()}.`;
+  return recordLine + body;
 }
 
 // Points-per-game-style form score (0-3), already scaled from last-5 results.

@@ -216,13 +216,17 @@ export default function Overview() {
               {nextMatches.map((m) => {
                 const homeStr = strengths.get(m.homeTeamId);
                 const awayStr = strengths.get(m.awayTeamId);
+                const homeStanding = standings.find((s) => s.teamId === m.homeTeamId);
+                const awayStanding = standings.find((s) => s.teamId === m.awayTeamId);
                 const reason = homeStr && awayStr
                   ? interpretMatchPrediction(
                       getTeamName(teams, m.homeTeamId, lang),
                       getTeamName(teams, m.awayTeamId, lang),
                       homeStr, awayStr,
                       m.homeWinProb, m.drawProb, m.awayWinProb,
-                      lang
+                      lang,
+                      homeStanding,
+                      awayStanding
                     )
                   : '';
                 return (

@@ -5,7 +5,7 @@ import { HoverInfo } from '../components/HoverInfo';
 import { interpretMatchPrediction } from '../utils/interpret.ts';
 
 export default function Matches() {
-  const { league, teams, matches, predictions, strengths, matchNotes, setMatchNote } = useData();
+  const { league, teams, matches, predictions, strengths, standings, matchNotes, setMatchNote } = useData();
   const { t, lang } = useI18n();
 
   const completed = matches
@@ -48,13 +48,17 @@ export default function Matches() {
                 m.awayTeamId === league.targetTeamId;
               const homeStr = strengths.get(m.homeTeamId);
               const awayStr = strengths.get(m.awayTeamId);
+              const homeStanding = standings.find((s) => s.teamId === m.homeTeamId);
+              const awayStanding = standings.find((s) => s.teamId === m.awayTeamId);
               const reason = pred && homeStr && awayStr
                 ? interpretMatchPrediction(
                     getTeamName(teams, m.homeTeamId, lang),
                     getTeamName(teams, m.awayTeamId, lang),
                     homeStr, awayStr,
                     pred.homeWinProb, pred.drawProb, pred.awayWinProb,
-                    lang
+                    lang,
+                    homeStanding,
+                    awayStanding
                   )
                 : '';
 

@@ -482,7 +482,8 @@ input[type="range"]::-webkit-slider-thumb {
   position: fixed; z-index: 2000;
   background: var(--bg-panel); border: 1px solid var(--border);
   padding: 6px 8px; font-size: 11px; line-height: 1.4;
-  max-width: 240px; color: var(--text);
+  max-width: 280px; color: var(--text);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   pointer-events: none;
+  white-space: pre-line;
 }
