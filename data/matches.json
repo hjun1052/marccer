@@ -565,9 +565,9 @@
     "date": "2026-08-27",
     "homeTeamId": "t12",
     "awayTeamId": "t10",
-    "status": "scheduled",
-    "homeScore": null,
-    "awayScore": null,
+    "status": "completed",
+    "homeScore": 3,
+    "awayScore": 0,
     "source": "chizumulu.github.io/UTD",
     "notes": ""
   },
