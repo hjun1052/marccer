@@ -30,6 +30,8 @@ export const ko: Record<string, string> = {
   'TIMELINE': '타임라인',
   'ROUND RESULTS': '라운드별 결과',
   'AUTO-TUNE': '자동 튜닝',
+  'EDIT': '수정',
+  'CLOSE': '닫기',
 
   // --- App header ---
   'Data': '데이터',

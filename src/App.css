@@ -449,6 +449,11 @@ input[type="range"]::-webkit-slider-thumb {
 .legend-color.target { background: var(--accent); }
 .legend-color.relegation { background: var(--red); }
 
+/* --- Mobile action collapsing: dense button clusters become one
+   trigger (opens a modal, or a native <select>) below 768px --- */
+.mobile-only-action { display: none; }
+.mobile-round-select { width: auto; margin-bottom: 6px; }
+
 /* --- Section Tabs (mobile content splitting) ---
    Desktop: nav hidden, all panels shown stacked (unchanged legacy layout).
    Mobile: nav shown, only the active panel is displayed. */
@@ -509,6 +514,18 @@ input[type="range"]::-webkit-slider-thumb {
   .pathfinder-summary, .pathfinder-paths {
     grid-template-columns: 1fr;
   }
+
+  .desktop-only-action { display: none; }
+  .mobile-only-action { display: inline-block; }
+  .mobile-hide-cell { display: none; }
+
+  /* Bigger touch targets site-wide */
+  .btn { padding: 8px 12px; font-size: 13px; }
+  .btn-sm { padding: 7px 11px; font-size: 12px; }
+  .tab-btn { padding: 6px 10px; font-size: 12px; }
+  .select-field, .input-field { padding: 7px 8px; font-size: 13px; }
+  input[type="range"] { height: 8px; }
+  input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; }
 }
 
 /* --- Modal --- */

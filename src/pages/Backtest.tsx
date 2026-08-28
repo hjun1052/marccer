@@ -44,7 +44,7 @@ export default function Backtest() {
         <p className="path-description">
           {t('For each round, team strengths are trained only on matches from strictly before that round, then used to predict that round\'s matches — the model never sees a round\'s own results (or later ones) before predicting it. This measures how well-calibrated the model has actually been this season, using only match results already in the Data tab. It does not need future data.')}
         </p>
-        <div className="round-filter">
+        <div className="round-filter desktop-only-action">
           {Array.from({ length: maxStartRound }, (_, i) => i + 1).map((r) => (
             <button
               key={r}
@@ -55,6 +55,15 @@ export default function Backtest() {
             </button>
           ))}
         </div>
+        <select
+          className="select-field mobile-only-action mobile-round-select"
+          value={startRound}
+          onChange={(e) => setStartRound(Number(e.target.value))}
+        >
+          {Array.from({ length: maxStartRound }, (_, i) => i + 1).map((r) => (
+            <option key={r} value={r}>R{r}+</option>
+          ))}
+        </select>
         <div className="scenario-instructions">
           {t('Starting from round')} {startRound} — {t('rounds before this have too little training data to be a fair test (predicting off 0-2 games of history is close to a coin flip regardless of model quality).')}
         </div>

@@ -326,7 +326,7 @@ export default function Overview() {
         {/* Next-Round Rooting Guide */}
         <div className="panel">
           <h3>{t('ROOTING GUIDE')}</h3>
-          <div className="round-filter">
+          <div className="round-filter desktop-only-action">
             {rootingRounds.map((r) => (
               <button
                 key={r}
@@ -337,6 +337,17 @@ export default function Overview() {
               </button>
             ))}
           </div>
+          {rootingRounds.length > 1 && (
+            <select
+              className="select-field mobile-only-action mobile-round-select"
+              value={rootingRound ?? rootingRounds[0]}
+              onChange={(e) => setRootingRound(Number(e.target.value))}
+            >
+              {rootingRounds.map((r) => (
+                <option key={r} value={r}>R{r}</option>
+              ))}
+            </select>
+          )}
           {rootingGuide.length === 0 ? (
             <div className="no-data">{t('No rival matches next round, or still computing...')}</div>
           ) : (

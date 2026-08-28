@@ -64,7 +64,7 @@ export default function PathFinderPlus() {
           <button className={`btn btn-sm ${scope === 'target' ? 'active' : ''}`} onClick={() => setScope('target')}>{t('OWN MATCHES')}</button>
           <button className={`btn btn-sm ${scope === 'rivals' ? 'active' : ''}`} onClick={() => setScope('rivals')}>{t('RIVAL MATCHES')}</button>
         </div>
-        <div className="round-filter">
+        <div className="round-filter desktop-only-action">
           <button
             className={`btn btn-sm ${selectedRound === null ? 'active' : ''}`}
             onClick={() => setSelectedRound(null)}
@@ -81,6 +81,16 @@ export default function PathFinderPlus() {
             </button>
           ))}
         </div>
+        <select
+          className="select-field mobile-only-action mobile-round-select"
+          value={selectedRound ?? ''}
+          onChange={(e) => setSelectedRound(e.target.value === '' ? null : Number(e.target.value))}
+        >
+          <option value="">{t('ALL ROUNDS')}</option>
+          {rounds.map((r) => (
+            <option key={r} value={r}>R{r}</option>
+          ))}
+        </select>
 
         {isComputing || !recommendations ? (
           <div className="no-data">{t('Running locked-outcome simulations across the remaining season...')}</div>

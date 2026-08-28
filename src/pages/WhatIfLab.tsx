@@ -39,6 +39,7 @@ export default function WhatIfLab() {
   const [scenarioName, setScenarioName] = useState('');
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [scoreInputs, setScoreInputs] = useState<Record<string, { home: string; away: string }>>({});
+  const [actionModalMatchId, setActionModalMatchId] = useState<string | null>(null);
 
   // Future matches for target team
   const targetFutureMatches = useMemo(() =>
@@ -339,7 +340,7 @@ export default function WhatIfLab() {
           {/* All Future Matches (filtered) */}
           <div className="panel">
             <h3>{t('ALL FUTURE MATCHES')}</h3>
-            <div className="round-filter">
+            <div className="round-filter desktop-only-action">
               <button
                 className={`btn btn-sm ${selectedRound === null ? 'active' : ''}`}
                 onClick={() => setSelectedRound(null)}
@@ -356,13 +357,23 @@ export default function WhatIfLab() {
                 </button>
               ))}
             </div>
+            <select
+              className="select-field mobile-only-action mobile-round-select"
+              value={selectedRound ?? ''}
+              onChange={(e) => setSelectedRound(e.target.value === '' ? null : Number(e.target.value))}
+            >
+              <option value="">{t('ALL')}</option>
+              {rounds.map((r) => (
+                <option key={r} value={r}>R{r}</option>
+              ))}
+            </select>
             <table className="dense-table">
               <thead>
                 <tr>
                   <th>{t('R')}</th>
                   <th>{t('Match')}</th>
                   <th>{t('Action')}</th>
-                  <th>{t('Exact Score')}</th>
+                  <th className="mobile-hide-cell">{t('Exact Score')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -379,7 +390,7 @@ export default function WhatIfLab() {
                         )}
                       </td>
                       <td>
-                        <div className="override-buttons compact">
+                        <div className="override-buttons compact desktop-only-action">
                           <button
                             className="btn btn-xs"
                             onClick={() => handleQuickOverride(m.id, 'home')}
@@ -409,8 +420,14 @@ export default function WhatIfLab() {
                             </button>
                           )}
                         </div>
+                        <button
+                          className="btn btn-sm mobile-only-action"
+                          onClick={() => setActionModalMatchId(m.id)}
+                        >
+                          {t('EDIT')}
+                        </button>
                       </td>
-                      <td>
+                      <td className="mobile-hide-cell">
                         <div className="score-input-group">
                           <input
                             type="number"
@@ -450,6 +467,51 @@ export default function WhatIfLab() {
               </tbody>
             </table>
           </div>
+
+          {actionModalMatchId && (() => {
+            const modalMatch = matches.find((mm) => mm.id === actionModalMatchId);
+            if (!modalMatch) return null;
+            const modalOverridden = activeScenario?.overrides.some((o) => o.matchId === modalMatch.id);
+            return (
+              <div className="modal-overlay" onClick={() => setActionModalMatchId(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                  <h3>{getTeamName(teams, modalMatch.homeTeamId, lang)} vs {getTeamName(teams, modalMatch.awayTeamId, lang)}</h3>
+                  <div className="override-buttons" style={{ marginTop: 10, marginBottom: 10 }}>
+                    <button className="btn btn-win" onClick={() => { handleQuickOverride(modalMatch.id, 'home'); setActionModalMatchId(null); }}>H</button>
+                    <button className="btn btn-draw" onClick={() => { handleQuickOverride(modalMatch.id, 'draw'); setActionModalMatchId(null); }}>D</button>
+                    <button className="btn btn-loss" onClick={() => { handleQuickOverride(modalMatch.id, 'away'); setActionModalMatchId(null); }}>A</button>
+                  </div>
+                  <div className="score-input-group" style={{ marginBottom: 10 }}>
+                    <input
+                      type="number" min="0" max="10"
+                      value={scoreInputs[modalMatch.id]?.home ?? ''}
+                      onChange={(e) => setScoreInputs((prev) => ({ ...prev, [modalMatch.id]: { ...prev[modalMatch.id], home: e.target.value } }))}
+                      className="score-input" placeholder="H"
+                    />
+                    <span>-</span>
+                    <input
+                      type="number" min="0" max="10"
+                      value={scoreInputs[modalMatch.id]?.away ?? ''}
+                      onChange={(e) => setScoreInputs((prev) => ({ ...prev, [modalMatch.id]: { ...prev[modalMatch.id], away: e.target.value } }))}
+                      className="score-input" placeholder="A"
+                    />
+                    <button className="btn btn-set" onClick={() => { handleScoreSubmit(modalMatch.id); setActionModalMatchId(null); }}>{t('SET')}</button>
+                  </div>
+                  <div className="override-buttons" style={{ justifyContent: 'flex-end' }}>
+                    {modalOverridden && (
+                      <button
+                        className="btn btn-remove"
+                        onClick={() => { if (activeScenario) removeScenarioOverride(activeScenario.id, modalMatch.id); setActionModalMatchId(null); }}
+                      >
+                        {t('REMOVE')}
+                      </button>
+                    )}
+                    <button className="btn" onClick={() => setActionModalMatchId(null)}>{t('CLOSE')}</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
           ) },
           { id: 'results', label: t('RESULTS'), content: (
