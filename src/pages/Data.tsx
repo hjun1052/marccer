@@ -5,7 +5,9 @@ import { useI18n } from '../i18n/I18nContext.tsx';
 import { SectionTabs } from '../components/SectionTabs';
 
 export default function Data() {
-  const { league, teams, matches, standings, strengths, simulation } = useData();
+  // Raw data inspection/integrity check always looks at the real data, not
+  // whatever round the time machine is currently viewing.
+  const { league, teams, realMatches: matches, standings, strengths, simulation } = useData();
   const { t, lang } = useI18n();
 
   const completed = useMemo(() => matches.filter(m => m.status === 'completed'), [matches]);

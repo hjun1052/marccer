@@ -9,6 +9,7 @@ import { simulateSeason } from '../engine/simulation.ts';
 import { createScenario, addOverride, evaluateScenario } from '../engine/scenarios.ts';
 import { findPaths, analyzeNextRoundRooting } from '../engine/pathfinder.ts';
 import { withSecondLeg } from '../engine/secondLeg.ts';
+import { snapshotAsOfRound, completedRoundsSoFar } from '../engine/titleTrend.ts';
 import type { SimulationOutput, ScenarioState } from '../types/index.ts';
 import type { PathFinderResult, RootingRecommendation } from '../engine/pathfinder.ts';
 import {
@@ -30,6 +31,10 @@ interface DataContextType {
   league: League;
   teams: Team[];
   matches: Match[];
+  // The real, editable match data, ignoring the time machine view — use this
+  // (not `matches`) for admin editing / export / anything that must not be
+  // silently frozen at a past round.
+  realMatches: Match[];
   // Projection-only league/matches: includes synthetic return-leg fixtures when
   // simulationConfig.includeSecondLeg is on. Use these (not the raw ones above)
   // for anything that projects the title race — standings and "next match"
@@ -59,6 +64,12 @@ interface DataContextType {
   matchNotes: Record<string, string>;
   setMatchNote: (matchId: string, text: string) => void;
 
+  // Time machine: view the entire site as it looked right after a past round
+  // (every match after that round reset to unplayed). null = live/current.
+  asOfRound: number | null;
+  setAsOfRound: (round: number | null) => void;
+  availableAsOfRounds: number[];
+
   // Actions
   setSimulationConfig: (config: SimulationConfig) => void;
   createNewScenario: (name: string, description: string) => Scenario;
@@ -80,9 +91,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const defaultMatches = matchesData as unknown as Match[];
 
   // Matches start from a local override (if one was saved in this browser before),
-  // falling back to the data baked into the build.
-  const [matches, setMatches] = useState<Match[]>(() => loadOverrideMatches() ?? defaultMatches);
+  // falling back to the data baked into the build. This is the real, editable
+  // data — the time machine (below) only ever filters a view on top of it.
+  const [realMatches, setRealMatches] = useState<Match[]>(() => loadOverrideMatches() ?? defaultMatches);
   const [usingLocalData, setUsingLocalData] = useState(() => loadOverrideMatches() !== null);
+
+  // Time machine: when set, every match after this round is treated as if it
+  // hadn't been played yet, so the whole app (standings, strengths, sim, path
+  // analysis...) recomputes as it would have looked right after that round.
+  const [asOfRound, setAsOfRound] = useState<number | null>(null);
+  const availableAsOfRounds = useMemo(() => completedRoundsSoFar(realMatches), [realMatches]);
+  const matches = useMemo(
+    () => (asOfRound === null ? realMatches : snapshotAsOfRound(realMatches, asOfRound)),
+    [realMatches, asOfRound]
+  );
 
   // Per-match personal notes, this browser only — pure annotation, never fed into any calculation.
   const [matchNotes, setMatchNotes] = useState<Record<string, string>>(() => loadMatchNotes());
@@ -229,7 +251,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   // Manual data update: edits apply immediately (so the whole app recomputes)
   // and persist to this browser's localStorage as an override over the baked-in data.
   const updateMatch = useCallback((matchId: string, updates: Partial<Pick<Match, 'status' | 'homeScore' | 'awayScore'>>) => {
-    setMatches((prev) => {
+    setRealMatches((prev) => {
       const next = prev.map((m) => (m.id === matchId ? { ...m, ...updates } : m));
       saveOverrideMatches(next);
       setUsingLocalData(true);
@@ -239,18 +261,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const resetLocalData = useCallback(() => {
     clearOverrideMatches();
-    setMatches(defaultMatches);
+    setRealMatches(defaultMatches);
     setUsingLocalData(false);
   }, [defaultMatches]);
 
   const exportLocalData = useCallback(() => {
-    downloadMatchesSaveFile(matches);
-  }, [matches]);
+    downloadMatchesSaveFile(realMatches);
+  }, [realMatches]);
 
   const importLocalData = useCallback(async (file: File) => {
     const imported = await parseMatchesSaveFile(file);
     saveOverrideMatches(imported);
-    setMatches(imported);
+    setRealMatches(imported);
     setUsingLocalData(true);
   }, []);
 
@@ -300,6 +322,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     league,
     teams,
     matches,
+    realMatches,
     projectionLeague,
     projectionMatches,
     standings,
@@ -322,6 +345,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     usingLocalData,
     matchNotes,
     setMatchNote,
+    asOfRound,
+    setAsOfRound,
+    availableAsOfRounds,
     setSimulationConfig,
     createNewScenario,
     setActiveScenario,

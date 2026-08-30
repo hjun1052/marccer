@@ -39,6 +39,18 @@
   display: flex; gap: 12px; font-size: 10px; color: var(--text-dim);
   font-family: var(--mono);
 }
+.time-machine-control {
+  display: flex; align-items: center; gap: 4px;
+  margin-left: auto;
+}
+.time-machine-control select { font-size: 10px; padding: 1px 3px; }
+.time-machine-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--yellow-dim); color: var(--text-bright);
+  border-bottom: 1px solid var(--yellow);
+  padding: 6px 12px; font-size: 11px;
+}
+.time-machine-banner .btn { margin-left: auto; }
 .loading-indicator { color: var(--yellow); animation: blink 1s infinite; }
 @keyframes blink { 50% { opacity: 0.3; } }
 

@@ -52,7 +52,7 @@ type TabId = typeof TABS[number]['id'];
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
-  const { league, simulation, isLoading } = useData();
+  const { league, simulation, isLoading, asOfRound, setAsOfRound, availableAsOfRounds } = useData();
   const { lang, setLang, t } = useI18n();
 
   // Mobile hamburger menu: closed -> category list -> tab list (drill-down).
@@ -160,8 +160,29 @@ function App() {
           <span>{t('Sims')}: {simulation?.config.count.toLocaleString() ?? '-'}</span>
           <span>{t('Updated')}: {league.lastDataUpdate}</span>
           {isLoading && <span className="loading-indicator">{t('COMPUTING...')}</span>}
+          {availableAsOfRounds.length >= 2 && (
+            <span className="time-machine-control">
+              🕐 {t('TIME MACHINE')}:
+              <select
+                className="select-field"
+                value={asOfRound ?? ''}
+                onChange={(e) => setAsOfRound(e.target.value === '' ? null : Number(e.target.value))}
+              >
+                <option value="">{t('LIVE')}</option>
+                {availableAsOfRounds.map((r) => (
+                  <option key={r} value={r}>{t('Round')} {r}</option>
+                ))}
+              </select>
+            </span>
+          )}
         </div>
       </header>
+      {asOfRound !== null && (
+        <div className="time-machine-banner">
+          🕐 {t('Viewing the site as it looked right after')} {t('Round')} {asOfRound} — {t('every later match is treated as unplayed. Nothing here is being edited.')}
+          <button className="btn btn-sm" onClick={() => setAsOfRound(null)}>{t('BACK TO LIVE')}</button>
+        </div>
+      )}
       <main className="app-main">
         {renderPage()}
       </main>

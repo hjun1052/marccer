@@ -5,7 +5,9 @@ import type { MatchStatus } from '../types/index.ts';
 import { useI18n } from '../i18n/I18nContext.tsx';
 
 export default function AdminUpdate() {
-  const { league, teams, matches, usingLocalData, updateMatch, resetLocalData, exportLocalData, importLocalData } = useData();
+  // Always edits the real data — the time machine view (if active elsewhere)
+  // must never silently hide matches from the admin editor.
+  const { league, teams, realMatches: matches, usingLocalData, updateMatch, resetLocalData, exportLocalData, importLocalData } = useData();
   const { t, lang } = useI18n();
 
   const [selectedRound, setSelectedRound] = useState<number | null>(null);

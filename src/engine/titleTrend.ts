@@ -18,7 +18,9 @@ export interface TitleTrendPoint {
 // Freezes the season as it looked right after `round`: matches through
 // that round keep their real result, everything later is reset to
 // scheduled/unplayed so simulateSeason projects forward from there.
-function snapshotAsOfRound(matches: Match[], round: number): Match[] {
+// Exported for the site-wide "time machine" view (useData.tsx) — same
+// snapshot idea, applied to everything instead of just this trend chart.
+export function snapshotAsOfRound(matches: Match[], round: number): Match[] {
   return matches.map((m) => {
     if (m.round <= round && m.status === 'completed') return m;
     return { ...m, status: 'scheduled' as const, homeScore: null, awayScore: null };

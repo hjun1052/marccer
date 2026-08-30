@@ -32,6 +32,11 @@ export const ko: Record<string, string> = {
   'AUTO-TUNE': '자동 튜닝',
   'EDIT': '수정',
   'CLOSE': '닫기',
+  'TIME MACHINE': '타임머신',
+  'LIVE': '실시간',
+  'Viewing the site as it looked right after': '보는 중:',
+  'every later match is treated as unplayed. Nothing here is being edited.': '이후 경기는 전부 안 치른 것으로 취급함. 실제 데이터는 안 바뀜.',
+  'BACK TO LIVE': '실시간으로',
 
   // --- App header ---
   'Data': '데이터',
