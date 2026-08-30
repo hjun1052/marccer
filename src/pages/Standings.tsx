@@ -4,6 +4,22 @@ import { pickTeamShort, pickTeamDisplay } from '../utils/helpers';
 import { HoverInfo } from '../components/HoverInfo';
 import { interpretGoalDiff, interpretStrength } from '../utils/interpret.ts';
 
+// Explains a games-in-hand gap: fixed number of rounds missed due to a bye
+// (odd team count -> one team sits out each round) vs actually postponed
+// matches, since only one of those means "still owes a game".
+function gamesInHandReason(byeRounds: number, postponedRounds: number, t: (s: string) => string): string {
+  if (byeRounds > 0 && postponedRounds > 0) {
+    return `${t('Bye rounds')}: ${byeRounds} · ${t('Postponed')}: ${postponedRounds}`;
+  }
+  if (byeRounds > 0) {
+    return `${t('Bye rounds')}: ${byeRounds} (${t('odd number of teams — one sits out each round, no game owed')})`;
+  }
+  if (postponedRounds > 0) {
+    return `${t('Postponed')}: ${postponedRounds} (${t('game still owed, will count once rescheduled')})`;
+  }
+  return t('Behind on games played — reason unclear from current data.');
+}
+
 export default function Standings() {
   const { league, teams, standings, strengths } = useData();
   const { t, lang } = useI18n();
@@ -56,7 +72,9 @@ export default function Standings() {
                   <td>
                     {s.matchesPlayed}
                     {s.matchesPlayed < maxPlayed && (
-                      <span className="games-in-hand"> ({s.matchesPlayed - maxPlayed})</span>
+                      <HoverInfo text={gamesInHandReason(s.byeRounds, s.postponedRounds, t)}>
+                        <span className="games-in-hand"> ({s.matchesPlayed - maxPlayed})</span>
+                      </HoverInfo>
                     )}
                   </td>
                   <td>{s.wins}</td>

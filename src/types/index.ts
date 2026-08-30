@@ -94,6 +94,12 @@ export interface TeamStanding {
   pointsGapToTarget: number;
   positionChange: number | null;
   form: FormRecord;
+  // Of the rounds that have actually happened so far (any match completed or
+  // postponed), how many this team had no fixture at all (odd team count ->
+  // one team sits out each round) vs how many were scheduled but postponed.
+  // Both explain a "-N" games-in-hand gap without it always meaning "unplayed".
+  byeRounds: number;
+  postponedRounds: number;
 }
 
 export interface FormRecord {

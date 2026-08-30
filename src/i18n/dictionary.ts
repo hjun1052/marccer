@@ -62,6 +62,11 @@ export const ko: Record<string, string> = {
   'Top 4': '4위',
   'Target Team': '우리팀',
   'Relegation Zone': '강등권',
+  'Bye rounds': '부전 라운드',
+  'Postponed': '연기',
+  'odd number of teams — one sits out each round, no game owed': '팀 수가 홀수라 매 라운드 한 팀씩 쉼 — 빚진 경기 아님',
+  'game still owed, will count once rescheduled': '아직 안 치른 경기, 재편성되면 반영됨',
+  'Behind on games played — reason unclear from current data.': '경기수 뒤처짐 — 현재 데이터로는 이유 불명확.',
 
   // --- Matches page ---
   'SCHEDULED': '예정',

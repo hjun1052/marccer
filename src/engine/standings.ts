@@ -157,6 +157,31 @@ export function calculateStandings(
     away.h2h[home.teamId].ga += homeScore;
   }
 
+  // Rounds that have actually happened so far — any match completed or
+  // postponed in that round counts it as "reached", regardless of whether
+  // every fixture in it has been played yet.
+  const reachedRounds = new Set(
+    matches.filter((m) => m.status === 'completed' || m.status === 'postponed').map((m) => m.round)
+  );
+  const byRound = new Map<string, Match[]>();
+  for (const m of matches) {
+    const key = `${m.round}`;
+    if (!byRound.has(key)) byRound.set(key, []);
+    byRound.get(key)!.push(m);
+  }
+
+  function countByeAndPostponed(teamId: string): { byeRounds: number; postponedRounds: number } {
+    let byeRounds = 0;
+    let postponedRounds = 0;
+    for (const round of reachedRounds) {
+      const roundMatches = byRound.get(`${round}`) ?? [];
+      const teamMatch = roundMatches.find((m) => m.homeTeamId === teamId || m.awayTeamId === teamId);
+      if (!teamMatch) byeRounds++;
+      else if (teamMatch.status === 'postponed') postponedRounds++;
+    }
+    return { byeRounds, postponedRounds };
+  }
+
   // Build standings array
   const standings: TeamStanding[] = [];
   const totalMatches = league.totalRounds;
@@ -164,6 +189,7 @@ export function calculateStandings(
   for (const team of teams) {
     const s = statsMap.get(team.id)!;
     const gamesRemaining = totalMatches - s.matchesPlayed;
+    const { byeRounds, postponedRounds } = countByeAndPostponed(team.id);
     standings.push({
       teamId: team.id,
       position: 0,
@@ -183,6 +209,8 @@ export function calculateStandings(
       pointsGapToTarget: 0,
       positionChange: null,
       form: buildForm(s.recentResults),
+      byeRounds,
+      postponedRounds,
     });
   }
 
