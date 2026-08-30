@@ -8,16 +8,11 @@ import { interpretGoalDiff, interpretStrength } from '../utils/interpret.ts';
 // (odd team count -> one team sits out each round) vs actually postponed
 // matches, since only one of those means "still owes a game".
 function gamesInHandReason(byeRounds: number, postponedRounds: number, t: (s: string) => string): string {
-  if (byeRounds > 0 && postponedRounds > 0) {
-    return `${t('Bye rounds')}: ${byeRounds} · ${t('Postponed')}: ${postponedRounds}`;
-  }
-  if (byeRounds > 0) {
-    return `${t('Bye rounds')}: ${byeRounds} (${t('odd number of teams — one sits out each round, no game owed')})`;
-  }
-  if (postponedRounds > 0) {
-    return `${t('Postponed')}: ${postponedRounds} (${t('game still owed, will count once rescheduled')})`;
-  }
-  return t('Behind on games played — reason unclear from current data.');
+  const lines = [`${t('Bye rounds')}: ${byeRounds} · ${t('Postponed')}: ${postponedRounds}`];
+  if (byeRounds > 0) lines.push(t('odd number of teams — one sits out each round, no game owed'));
+  if (postponedRounds > 0) lines.push(t('game still owed, will count once rescheduled'));
+  if (byeRounds === 0 && postponedRounds === 0) lines.push(t('Behind on games played — reason unclear from current data.'));
+  return lines.join('\n');
 }
 
 export default function Standings() {
