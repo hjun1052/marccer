@@ -100,6 +100,9 @@ export interface TeamStanding {
   // Both explain a "-N" games-in-hand gap without it always meaning "unplayed".
   byeRounds: number;
   postponedRounds: number;
+  // Round already has other results in, but this team's own match within it
+  // is still just a normal, not-yet-played fixture (not postponed, not a bye).
+  stillScheduledRounds: number;
 }
 
 export interface FormRecord {

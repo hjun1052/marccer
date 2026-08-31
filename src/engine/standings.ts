@@ -170,16 +170,21 @@ export function calculateStandings(
     byRound.get(key)!.push(m);
   }
 
-  function countByeAndPostponed(teamId: string): { byeRounds: number; postponedRounds: number } {
+  function countByeAndPostponed(teamId: string): { byeRounds: number; postponedRounds: number; stillScheduledRounds: number } {
     let byeRounds = 0;
     let postponedRounds = 0;
+    let stillScheduledRounds = 0;
     for (const round of reachedRounds) {
       const roundMatches = byRound.get(`${round}`) ?? [];
       const teamMatch = roundMatches.find((m) => m.homeTeamId === teamId || m.awayTeamId === teamId);
       if (!teamMatch) byeRounds++;
       else if (teamMatch.status === 'postponed') postponedRounds++;
+      // Round already has other results in, but this team's own fixture
+      // hasn't been played yet (its date just hasn't come around) — not a
+      // bye, not a postponement, just a normal remaining match.
+      else if (teamMatch.status === 'scheduled') stillScheduledRounds++;
     }
-    return { byeRounds, postponedRounds };
+    return { byeRounds, postponedRounds, stillScheduledRounds };
   }
 
   // Build standings array
@@ -189,7 +194,7 @@ export function calculateStandings(
   for (const team of teams) {
     const s = statsMap.get(team.id)!;
     const gamesRemaining = totalMatches - s.matchesPlayed;
-    const { byeRounds, postponedRounds } = countByeAndPostponed(team.id);
+    const { byeRounds, postponedRounds, stillScheduledRounds } = countByeAndPostponed(team.id);
     standings.push({
       teamId: team.id,
       position: 0,
@@ -211,6 +216,7 @@ export function calculateStandings(
       form: buildForm(s.recentResults),
       byeRounds,
       postponedRounds,
+      stillScheduledRounds,
     });
   }
 

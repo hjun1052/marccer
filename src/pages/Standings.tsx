@@ -7,11 +7,13 @@ import { interpretGoalDiff, interpretStrength } from '../utils/interpret.ts';
 // Explains a games-in-hand gap: fixed number of rounds missed due to a bye
 // (odd team count -> one team sits out each round) vs actually postponed
 // matches, since only one of those means "still owes a game".
-function gamesInHandReason(byeRounds: number, postponedRounds: number, t: (s: string) => string): string {
-  const lines = [`${t('Bye rounds')}: ${byeRounds} · ${t('Postponed')}: ${postponedRounds}`];
+function gamesInHandReason(byeRounds: number, postponedRounds: number, stillScheduledRounds: number, t: (s: string) => string): string {
+  const lines = [
+    `${t('Bye rounds')}: ${byeRounds} · ${t('Postponed')}: ${postponedRounds} · ${t('Not yet played')}: ${stillScheduledRounds}`,
+  ];
   if (byeRounds > 0) lines.push(t('odd number of teams — one sits out each round, no game owed'));
   if (postponedRounds > 0) lines.push(t('game still owed, will count once rescheduled'));
-  if (byeRounds === 0 && postponedRounds === 0) lines.push(t('Behind on games played — reason unclear from current data.'));
+  if (stillScheduledRounds > 0) lines.push(t('Normal remaining fixture, just hasn\'t been played yet — not postponed, not a bye.'));
   return lines.join('\n');
 }
 
@@ -67,7 +69,7 @@ export default function Standings() {
                   <td>
                     {s.matchesPlayed}
                     {s.matchesPlayed < maxPlayed && (
-                      <HoverInfo text={gamesInHandReason(s.byeRounds, s.postponedRounds, t)}>
+                      <HoverInfo text={gamesInHandReason(s.byeRounds, s.postponedRounds, s.stillScheduledRounds, t)}>
                         <span className="games-in-hand"> ({s.matchesPlayed - maxPlayed})</span>
                       </HoverInfo>
                     )}

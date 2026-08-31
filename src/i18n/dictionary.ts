@@ -64,9 +64,10 @@ export const ko: Record<string, string> = {
   'Relegation Zone': '강등권',
   'Bye rounds': '쉬는 라운드',
   'Postponed': '경기 연기',
+  'Not yet played': '아직 안 한 경기',
   'odd number of teams — one sits out each round, no game owed': '팀 수가 홀수라 매 라운드 한 팀씩 쉼 — 나중에 따로 치를 경기 없음',
   'game still owed, will count once rescheduled': '아직 못 치른 경기 — 일정 재편성되면 반영됨',
-  'Behind on games played — reason unclear from current data.': '경기수 뒤처짐 — 현재 데이터로는 이유 불명확.',
+  "Normal remaining fixture, just hasn't been played yet — not postponed, not a bye.": '정상적으로 예정된 경기, 아직 날짜가 안 됐을 뿐임 — 연기도 아니고 쉬는 라운드도 아님.',
 
   // --- Matches page ---
   'SCHEDULED': '예정',
