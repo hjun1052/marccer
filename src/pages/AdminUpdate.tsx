@@ -7,13 +7,21 @@ import { useI18n } from '../i18n/I18nContext.tsx';
 export default function AdminUpdate() {
   // Always edits the real data — the time machine view (if active elsewhere)
   // must never silently hide matches from the admin editor.
-  const { league, teams, realMatches: matches, usingLocalData, updateMatch, resetLocalData, exportLocalData, importLocalData } = useData();
+  const {
+    league, teams, realMatches: matches, usingLocalData, updateMatch, resetLocalData, exportLocalData, importLocalData,
+    usingExternalDataset, loadExternalDataset, clearExternalDataset,
+  } = useData();
   const { t, lang } = useI18n();
 
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [scoreInputs, setScoreInputs] = useState<Record<string, { home: string; away: string }>>({});
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [datasetUrl, setDatasetUrl] = useState('');
+  const [datasetError, setDatasetError] = useState<string | null>(null);
+  const [datasetLoading, setDatasetLoading] = useState(false);
+  const [showDatasetModal, setShowDatasetModal] = useState(false);
 
   const rounds = useMemo(
     () => Array.from(new Set(matches.map((m) => m.round))).sort((a, b) => a - b),
@@ -57,6 +65,26 @@ export default function AdminUpdate() {
     }
   };
 
+  const handleLoadDataset = async () => {
+    if (!datasetUrl.trim()) return;
+    setDatasetLoading(true);
+    setDatasetError(null);
+    try {
+      await loadExternalDataset(datasetUrl.trim());
+    } catch (err) {
+      setDatasetError(err instanceof Error ? err.message : t('Failed to load dataset.'));
+    } finally {
+      setDatasetLoading(false);
+    }
+  };
+
+  const handleClearDataset = () => {
+    if (confirm(t('Drop the external dataset and go back to this site\'s own league?'))) {
+      clearExternalDataset();
+      setDatasetError(null);
+    }
+  };
+
   return (
     <div className="page">
       <h2>{t('UPDATE DATA')}</h2>
@@ -82,6 +110,55 @@ export default function AdminUpdate() {
         </div>
         {importError && <div className="mathematical-note" style={{ color: 'var(--red)' }}>{importError}</div>}
       </div>
+
+      <div className="panel full-width" style={{ borderColor: 'var(--red)' }}>
+        <h3 style={{ color: 'var(--red)' }}>⚠ {t('LOAD EXTERNAL DATASET (EXPERIMENTAL)')}</h3>
+        <div className="scenario-instructions">
+          {t('Replaces the entire league — teams, rules, matches — with a JSON file fetched from a URL, so a completely different league can be simulated instead of just entering results for this one. The URL must point to one JSON file shaped { league, teams, matches } and allow cross-origin requests (CORS); a raw.githubusercontent.com link usually works.')}
+        </div>
+        <div className="stat-row">
+          <span className="stat-label">{t('Currently showing')}</span>
+          <span className={`stat-value ${usingExternalDataset ? 'accent' : ''}`}>
+            {usingExternalDataset ? `${t('EXTERNAL DATASET')}: ${league.name}` : t('THIS SITE\'S OWN LEAGUE')}
+          </span>
+        </div>
+        <div className="scenario-create" style={{ marginTop: 6 }}>
+          <input
+            type="text"
+            className="input-field"
+            value={datasetUrl}
+            onChange={(e) => setDatasetUrl(e.target.value)}
+            placeholder={t('https://.../dataset.json')}
+          />
+          <button className="btn btn-primary" disabled={!datasetUrl.trim() || datasetLoading} onClick={() => setShowDatasetModal(true)}>
+            {datasetLoading ? t('LOADING...') : t('LOAD')}
+          </button>
+        </div>
+        {usingExternalDataset && (
+          <button className="btn btn-sm btn-remove" style={{ marginTop: 6 }} onClick={handleClearDataset}>{t('BACK TO OWN LEAGUE')}</button>
+        )}
+        {datasetError && <div className="mathematical-note" style={{ color: 'var(--red)' }}>{datasetError}</div>}
+      </div>
+
+      {showDatasetModal && (
+        <div className="modal-overlay" onClick={() => setShowDatasetModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: 'var(--red)' }}>⚠ {t('EXPERIMENTAL FEATURE')}</h3>
+            <p className="path-description">
+              {t('This replaces every team, rule, and match on the site with whatever this URL returns — none of it is validated beyond basic shape checks. Only load a URL you trust. This only changes what this browser shows (localStorage); nothing is uploaded anywhere.')}
+            </p>
+            <div className="override-buttons" style={{ marginTop: 10, justifyContent: 'flex-end' }}>
+              <button className="btn btn-sm" onClick={() => setShowDatasetModal(false)}>{t('CANCEL')}</button>
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => { setShowDatasetModal(false); handleLoadDataset(); }}
+              >
+                {t('LOAD IT')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="panel full-width">
         <h3>{t('EDIT MATCHES')}</h3>

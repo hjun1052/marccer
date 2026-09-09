@@ -19,6 +19,13 @@ import {
   downloadMatchesSaveFile,
   parseMatchesSaveFile,
 } from '../utils/dataOverride.ts';
+import {
+  loadDatasetOverride,
+  saveDatasetOverride,
+  clearDatasetOverride,
+  fetchExternalDataset,
+} from '../utils/datasetOverride.ts';
+import type { ExternalDataset } from '../utils/datasetOverride.ts';
 import { loadScenarios, saveScenarios } from '../utils/scenarioStorage.ts';
 import { loadMatchNotes, saveMatchNotes } from '../utils/matchNotes.ts';
 
@@ -64,6 +71,13 @@ interface DataContextType {
   matchNotes: Record<string, string>;
   setMatchNote: (matchId: string, text: string) => void;
 
+  // External dataset: fully replaces league+teams+matches with a
+  // user-supplied bundle (fetched by URL), for simulating a completely
+  // different league rather than just entering results for ours.
+  usingExternalDataset: boolean;
+  loadExternalDataset: (url: string) => Promise<void>;
+  clearExternalDataset: () => void;
+
   // Time machine: view the entire site as it looked right after a past round
   // (every match after that round reset to unplayed). null = live/current.
   asOfRound: number | null;
@@ -86,15 +100,39 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | null>(null);
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const league = leagueData as League;
-  const teams = teamsData as Team[];
-  const defaultMatches = matchesData as unknown as Match[];
+  // An external dataset (if loaded) fully replaces the baked-in league/teams
+  // — a different league/teams/rules entirely, not just different results
+  // for ours. The matches-only override below never applies on top of it.
+  const [externalDataset, setExternalDataset] = useState<ExternalDataset | null>(() => loadDatasetOverride());
+  const usingExternalDataset = externalDataset !== null;
+
+  const league = externalDataset?.league ?? (leagueData as League);
+  const teams = externalDataset?.teams ?? (teamsData as Team[]);
+  const defaultMatches = externalDataset?.matches ?? (matchesData as unknown as Match[]);
 
   // Matches start from a local override (if one was saved in this browser before),
   // falling back to the data baked into the build. This is the real, editable
   // data — the time machine (below) only ever filters a view on top of it.
-  const [realMatches, setRealMatches] = useState<Match[]>(() => loadOverrideMatches() ?? defaultMatches);
-  const [usingLocalData, setUsingLocalData] = useState(() => loadOverrideMatches() !== null);
+  const [realMatches, setRealMatches] = useState<Match[]>(() =>
+    usingExternalDataset ? defaultMatches : (loadOverrideMatches() ?? defaultMatches)
+  );
+  const [usingLocalData, setUsingLocalData] = useState(() => !usingExternalDataset && loadOverrideMatches() !== null);
+
+  const loadExternalDataset = useCallback(async (url: string) => {
+    const dataset = await fetchExternalDataset(url);
+    saveDatasetOverride(dataset);
+    setExternalDataset(dataset);
+    setRealMatches(dataset.matches);
+    setUsingLocalData(false);
+  }, []);
+
+  const clearExternalDataset = useCallback(() => {
+    clearDatasetOverride();
+    setExternalDataset(null);
+    const fallback = loadOverrideMatches() ?? (matchesData as unknown as Match[]);
+    setRealMatches(fallback);
+    setUsingLocalData(loadOverrideMatches() !== null);
+  }, []);
 
   // Time machine: when set, every match after this round is treated as if it
   // hadn't been played yet, so the whole app (standings, strengths, sim, path
@@ -345,6 +383,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     usingLocalData,
     matchNotes,
     setMatchNote,
+    usingExternalDataset,
+    loadExternalDataset,
+    clearExternalDataset,
     asOfRound,
     setAsOfRound,
     availableAsOfRounds,

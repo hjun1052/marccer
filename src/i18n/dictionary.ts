@@ -342,6 +342,20 @@ export const ko: Record<string, string> = {
   'POSTPONE': '연기처리',
   'Failed to import file.': '파일 불러오기 실패.',
   'Discard the local override and go back to the data baked into this build?': '로컬 수정본 버리고 원본으로 되돌릴까?',
+  'LOAD EXTERNAL DATASET (EXPERIMENTAL)': '외부 데이터셋 불러오기 (실험적)',
+  'Replaces the entire league — teams, rules, matches — with a JSON file fetched from a URL, so a completely different league can be simulated instead of just entering results for this one. The URL must point to one JSON file shaped { league, teams, matches } and allow cross-origin requests (CORS); a raw.githubusercontent.com link usually works.':
+    '리그 전체(팀, 규칙, 경기)를 URL에서 가져온 JSON 파일로 통째로 교체함 — 이 리그 결과만 입력하는 게 아니라 완전히 다른 리그를 시뮬레이션할 수 있음. URL은 { league, teams, matches } 형태의 JSON 파일 하나를 가리켜야 하고 CORS(교차 출처 요청)를 허용해야 함 — raw.githubusercontent.com 링크면 보통 됨.',
+  'EXTERNAL DATASET': '외부 데이터셋',
+  "THIS SITE'S OWN LEAGUE": '이 사이트 원래 리그',
+  'https://.../dataset.json': 'https://.../dataset.json',
+  'LOADING...': '불러오는중...',
+  'LOAD': '불러오기',
+  'BACK TO OWN LEAGUE': '원래 리그로',
+  'Failed to load dataset.': '데이터셋 불러오기 실패.',
+  "Drop the external dataset and go back to this site's own league?": '외부 데이터셋 버리고 이 사이트 원래 리그로 되돌릴까?',
+  'This replaces every team, rule, and match on the site with whatever this URL returns — none of it is validated beyond basic shape checks. Only load a URL you trust. This only changes what this browser shows (localStorage); nothing is uploaded anywhere.':
+    '이 URL이 반환하는 내용으로 사이트의 모든 팀·규칙·경기가 바뀜 — 형태만 대충 검증하고 내용은 검증 안 함. 믿을 수 있는 URL만 불러올 것. 이 브라우저(localStorage)에만 적용되고 어디로 업로드되진 않음.',
+  'LOAD IT': '불러오기',
 
   // --- Scenario Search page ---
   'WHICH RESULT COMBINATIONS WIN THE TITLE': '어떤 결과 조합이면 우승하나',
