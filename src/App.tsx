@@ -52,7 +52,7 @@ type TabId = typeof TABS[number]['id'];
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
-  const { league, simulation, isLoading, asOfRound, setAsOfRound, availableAsOfRounds } = useData();
+  const { league, simulation, isLoading, asOfRound, setAsOfRound, availableAsOfRounds, remoteBaseLoading, remoteBaseError } = useData();
   const { lang, setLang, t } = useI18n();
 
   // Mobile hamburger menu: closed -> category list -> tab list (drill-down).
@@ -81,8 +81,21 @@ function App() {
     }
   };
 
+  if (remoteBaseLoading) {
+    return (
+      <div className="app remote-loading-screen">
+        <span className="loading-indicator">{t('Loading configured data source...')}</span>
+      </div>
+    );
+  }
+
   return (
     <div className="app">
+      {remoteBaseError && (
+        <div className="time-machine-banner">
+          ⚠ {t('Could not load the configured remote data source — showing the built-in demo data instead.')} ({remoteBaseError})
+        </div>
+      )}
       <header className="app-header">
         <div className="app-title">
           <button

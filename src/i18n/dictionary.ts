@@ -356,6 +356,9 @@ export const ko: Record<string, string> = {
   'This replaces every team, rule, and match on the site with whatever this URL returns — none of it is validated beyond basic shape checks. Only load a URL you trust. This only changes what this browser shows (localStorage); nothing is uploaded anywhere.':
     '이 URL이 반환하는 내용으로 사이트의 모든 팀·규칙·경기가 바뀜 — 형태만 대충 검증하고 내용은 검증 안 함. 믿을 수 있는 URL만 불러올 것. 이 브라우저(localStorage)에만 적용되고 어디로 업로드되진 않음.',
   'LOAD IT': '불러오기',
+  'Loading configured data source...': '설정된 데이터 소스 불러오는중...',
+  'Could not load the configured remote data source — showing the built-in demo data instead.': '설정된 원격 데이터 소스를 못 불러옴 — 기본 내장 데이터로 표시함.',
+  'REMOTE DATA SOURCE (deployment config)': '원격 데이터 소스 (배포 설정)',
 
   // --- Scenario Search page ---
   'WHICH RESULT COMBINATIONS WIN THE TITLE': '어떤 결과 조합이면 우승하나',

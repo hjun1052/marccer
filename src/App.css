@@ -5,6 +5,10 @@
 
 /* --- App Layout --- */
 .app { display: flex; flex-direction: column; min-height: 100vh; }
+.remote-loading-screen {
+  align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px;
+}
 
 .app-header {
   position: sticky; top: 0; z-index: 100;

@@ -77,6 +77,10 @@ interface DataContextType {
   usingExternalDataset: boolean;
   loadExternalDataset: (url: string) => Promise<void>;
   clearExternalDataset: () => void;
+  // Deployment-wide data source (VITE_DATA_SOURCE_URL) — see useData.tsx.
+  usingRemoteDataSource: boolean;
+  remoteBaseLoading: boolean;
+  remoteBaseError: string | null;
 
   // Time machine: view the entire site as it looked right after a past round
   // (every match after that round reset to unplayed). null = live/current.
@@ -99,6 +103,12 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | null>(null);
 
+// Self-hosting: point a deployment at a different dataset entirely via a
+// build-time env var instead of forking data/*.json — set once, applies to
+// every visitor of that deployment (unlike the admin's manual "load
+// external dataset" override below, which is per-browser via localStorage).
+const REMOTE_DATA_SOURCE_URL = import.meta.env.VITE_DATA_SOURCE_URL as string | undefined;
+
 export function DataProvider({ children }: { children: ReactNode }) {
   // An external dataset (if loaded) fully replaces the baked-in league/teams
   // — a different league/teams/rules entirely, not just different results
@@ -106,9 +116,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [externalDataset, setExternalDataset] = useState<ExternalDataset | null>(() => loadDatasetOverride());
   const usingExternalDataset = externalDataset !== null;
 
-  const league = externalDataset?.league ?? (leagueData as League);
-  const teams = externalDataset?.teams ?? (teamsData as Team[]);
-  const defaultMatches = externalDataset?.matches ?? (matchesData as unknown as Match[]);
+  // The deployment-configured remote dataset (VITE_DATA_SOURCE_URL), fetched
+  // fresh on every load rather than persisted — it's the deployment's data
+  // source, not a per-browser override. Sits between the static baked-in
+  // JSON (lowest priority) and the admin's manual override (highest).
+  const [remoteBaseDataset, setRemoteBaseDataset] = useState<ExternalDataset | null>(null);
+  const [remoteBaseLoading, setRemoteBaseLoading] = useState(!!REMOTE_DATA_SOURCE_URL);
+  const [remoteBaseError, setRemoteBaseError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!REMOTE_DATA_SOURCE_URL) return;
+    let cancelled = false;
+    fetchExternalDataset(REMOTE_DATA_SOURCE_URL)
+      .then((dataset) => { if (!cancelled) setRemoteBaseDataset(dataset); })
+      .catch((err) => { if (!cancelled) setRemoteBaseError(err instanceof Error ? err.message : String(err)); })
+      .finally(() => { if (!cancelled) setRemoteBaseLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const league = externalDataset?.league ?? remoteBaseDataset?.league ?? (leagueData as League);
+  const teams = externalDataset?.teams ?? remoteBaseDataset?.teams ?? (teamsData as Team[]);
+  const defaultMatches = externalDataset?.matches ?? remoteBaseDataset?.matches ?? (matchesData as unknown as Match[]);
 
   // Matches start from a local override (if one was saved in this browser before),
   // falling back to the data baked into the build. This is the real, editable
@@ -117,6 +145,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
     usingExternalDataset ? defaultMatches : (loadOverrideMatches() ?? defaultMatches)
   );
   const [usingLocalData, setUsingLocalData] = useState(() => !usingExternalDataset && loadOverrideMatches() !== null);
+
+  // Once the remote base dataset arrives (it's async, so realMatches' initial
+  // value above couldn't have known about it yet), adopt its matches unless
+  // the admin has since loaded their own manual override.
+  useEffect(() => {
+    if (remoteBaseDataset && !usingExternalDataset) {
+      setRealMatches(loadOverrideMatches() ?? remoteBaseDataset.matches);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remoteBaseDataset]);
 
   const loadExternalDataset = useCallback(async (url: string) => {
     const dataset = await fetchExternalDataset(url);
@@ -129,10 +167,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const clearExternalDataset = useCallback(() => {
     clearDatasetOverride();
     setExternalDataset(null);
-    const fallback = loadOverrideMatches() ?? (matchesData as unknown as Match[]);
+    const base = remoteBaseDataset?.matches ?? (matchesData as unknown as Match[]);
+    const fallback = loadOverrideMatches() ?? base;
     setRealMatches(fallback);
     setUsingLocalData(loadOverrideMatches() !== null);
-  }, []);
+  }, [remoteBaseDataset]);
 
   // Time machine: when set, every match after this round is treated as if it
   // hadn't been played yet, so the whole app (standings, strengths, sim, path
@@ -386,6 +425,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     usingExternalDataset,
     loadExternalDataset,
     clearExternalDataset,
+    usingRemoteDataSource: remoteBaseDataset !== null,
+    remoteBaseLoading,
+    remoteBaseError,
     asOfRound,
     setAsOfRound,
     availableAsOfRounds,

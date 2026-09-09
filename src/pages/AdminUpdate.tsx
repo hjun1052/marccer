@@ -9,7 +9,7 @@ export default function AdminUpdate() {
   // must never silently hide matches from the admin editor.
   const {
     league, teams, realMatches: matches, usingLocalData, updateMatch, resetLocalData, exportLocalData, importLocalData,
-    usingExternalDataset, loadExternalDataset, clearExternalDataset,
+    usingExternalDataset, loadExternalDataset, clearExternalDataset, usingRemoteDataSource,
   } = useData();
   const { t, lang } = useI18n();
 
@@ -97,7 +97,11 @@ export default function AdminUpdate() {
         <div className="stat-row">
           <span className="stat-label">{t('Currently showing')}</span>
           <span className={`stat-value ${usingLocalData ? 'accent' : ''}`}>
-            {usingLocalData ? t('LOCAL OVERRIDE (this browser)') : t('DEFAULT (baked into build)')}
+            {usingLocalData
+              ? t('LOCAL OVERRIDE (this browser)')
+              : usingRemoteDataSource
+                ? t('REMOTE DATA SOURCE (deployment config)')
+                : t('DEFAULT (baked into build)')}
           </span>
         </div>
         <div className="override-buttons" style={{ marginTop: 6 }}>
