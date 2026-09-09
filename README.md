@@ -44,7 +44,7 @@ Outputs a static `dist/` — deploy it anywhere that serves static files (Cloudf
 
 ## Downloads page
 
-`landing/index.html` is a standalone static download/support page (source zip, GitHub link, Buy Me a Coffee) — deploy it as its own Cloudflare Pages project with build output directory set to `landing/` and no build command. Not part of the app build.
+`landing/index.html` is a standalone static download/support page (source zip, GitHub link, Buy Me a Coffee) — deployed at [marccer.codz.me](https://marccer.codz.me) as its own Cloudflare Pages project, build output directory set to `landing/`, no build command. Not part of the app build.
 
 ## License
 

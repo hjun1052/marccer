@@ -3,6 +3,7 @@
 // stays a flat lookup table instead of invented key names.
 export const ko: Record<string, string> = {
   // --- Tabs / page titles (shared with h2 titles) ---
+  'GET MARCCER': '내려받기',
   'OVERVIEW': '개요',
   'STANDINGS': '순위표',
   'MATCHES': '경기',

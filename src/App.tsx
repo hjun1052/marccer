@@ -119,6 +119,14 @@ function App() {
               {t(tab.label)}
             </button>
           ))}
+          <a
+            className="tab-btn"
+            href="https://marccer.codz.me"
+            target="_blank"
+            rel="noopener"
+          >
+            {t('GET MARCCER')}
+          </a>
           <button
             className="tab-btn lang-toggle"
             onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
@@ -141,6 +149,14 @@ function App() {
                       {t(cat.label)} ›
                     </button>
                   ))}
+                  <a
+                    className="mobile-menu-item"
+                    href="https://marccer.codz.me"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {t('GET MARCCER')}
+                  </a>
                   <button
                     className="mobile-menu-item"
                     onClick={() => { setLang(lang === 'ko' ? 'en' : 'ko'); closeMobileMenu(); }}
