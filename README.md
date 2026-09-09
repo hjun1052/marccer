@@ -21,7 +21,9 @@ This is separate from the per-browser admin override (UPDATE DATA tab): that one
 
 ### Keeping the data fresh
 
-This repo doesn't include a scraper — you bring your own that writes the `{league, teams, matches}` JSON and commits/uploads it wherever `VITE_DATA_SOURCE_URL` points. A simple setup: a scheduled GitHub Action in your data repo that scrapes your league's source, commits the updated JSON, and lets the raw GitHub URL serve the latest version automatically (no redeploy of the app needed — it fetches fresh JSON on every page load).
+`scripts/scrape.ts` (`npm run scrape`) is a reference scraper for this project's own source site — it updates existing rows in `data/matches.json` (matched by round + team pair) from the source's published results, and never invents new rows, so the full-season schedule must already exist there. `.github/workflows/scrape.yml` runs it on a cron and auto-commits when something changed, so results land without anyone touching the repo by hand. Adapt `SOURCE_URL` and the parsing in `scripts/scrape.ts` for a different source site's format.
+
+If you're using `VITE_DATA_SOURCE_URL` instead of forking `data/*.json` directly, point your own scraper's output at wherever that URL serves from (e.g. a `raw.githubusercontent.com` link into your own data repo) — the app fetches fresh JSON on every page load, no redeploy needed when only the data changes.
 
 ## Building for production
 
