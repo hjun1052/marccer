@@ -5,7 +5,7 @@ import { findPaths } from '../engine/pathfinder';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { HoverInfo } from '../components/HoverInfo';
 import { SectionTabs } from '../components/SectionTabs';
-import { interpretControlIndex } from '../utils/interpret.ts';
+import { interpretControlIndex, formatTitleProbSwing } from '../utils/interpret.ts';
 
 export default function PathFinder() {
   const { league, teams, standings, matches, strengths, simulation, simulationConfig } = useData();
@@ -221,6 +221,9 @@ export default function PathFinder() {
                 </div>
                 <div className="mustwin-match">
                   {getTeamName(teams, mw.homeTeamId, lang)} vs {getTeamName(teams, mw.awayTeamId, lang)}
+                </div>
+                <div className="mustwin-swing">
+                  {formatTitleProbSwing(mw.titleProbBeforeWin, mw.titleProbBeforeDraw, mw.titleProbBeforeLoss, lang)}
                 </div>
                 <div className="mustwin-reasons">
                   {mw.reasons.map((r, i) => (

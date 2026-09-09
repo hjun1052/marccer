@@ -4,6 +4,7 @@ import { getTeamName, pickTeamShort, slugify } from '../utils/helpers';
 import type { ForecastAssumption } from '../types/index.ts';
 import { useI18n } from '../i18n/I18nContext.tsx';
 import { SectionTabs } from '../components/SectionTabs';
+import { formatTitleProbSwing } from '../utils/interpret.ts';
 import {
   BarChart,
   Bar,
@@ -688,6 +689,9 @@ export default function WhatIfLab() {
                     </div>
                     <div className="mustwin-match">
                       {getTeamName(teams, mw.homeTeamId, lang)} vs {getTeamName(teams, mw.awayTeamId, lang)}
+                    </div>
+                    <div className="mustwin-swing">
+                      {formatTitleProbSwing(mw.titleProbBeforeWin, mw.titleProbBeforeDraw, mw.titleProbBeforeLoss, lang)}
                     </div>
                     {mw.reasons.map((r, i) => (
                       <div key={i} className="mustwin-reason">{r}</div>

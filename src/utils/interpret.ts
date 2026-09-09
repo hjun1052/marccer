@@ -206,3 +206,16 @@ export function interpretForm(formPoints: number, lang: Lang): string {
   ]);
   return say(bucket, lang);
 }
+
+// How much a single not-yet-played match could swing the title race — the
+// spread across its three possible outcomes' title probabilities.
+export function formatTitleProbSwing(win: number, draw: number, loss: number, lang: Lang): string {
+  const pct = (p: number) => Math.round(p * 1000) / 10;
+  const values = [pct(win), pct(draw), pct(loss)];
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const halfSwing = Math.round((max - min) * 5) / 10;
+  return lang === 'en'
+    ? `Title probability ranges ${min}%–${max}% depending on this result (±${halfSwing}pp)`
+    : `이 경기 결과에 따라 우승확률 ${min}%~${max}% 사이로 변동 (±${halfSwing}%p)`;
+}
