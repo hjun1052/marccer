@@ -9,7 +9,16 @@ npm install
 npm run dev
 ```
 
-## Self-hosting with your own league
+## Starting a brand-new league from scratch
+
+If you're not pointing at an existing league's data (see below) and want to set one up:
+
+1. Write `data/teams.json` — one entry per team (`id`, `name`, `shortName`, `displayName`, optionally `venue.{lat,lng}` for the travel-fatigue feature).
+2. Write `data/league.json` — `id`, `name`, `seasonId`, `targetTeamId` (whose title race the dashboard is built around), `totalRounds`, `rules.{winPoints,drawPoints,lossPoints,tiebreakers}`.
+3. Run `npm run init-schedule` (add `-- --double` for a home-and-away double round-robin) to generate the full-season `data/matches.json` from your teams list — every pairing, every round, all `status: "scheduled"`. It refuses to overwrite an existing non-empty `data/matches.json` unless you pass `-- --force`.
+4. As real results come in, either edit them by hand (UPDATE DATA tab, or directly in `data/matches.json`) or adapt `scripts/scrape.ts` to your own results source.
+
+## Self-hosting with your own (existing) league's data
 
 By default the site ships with a demo league baked into `data/league.json`, `data/teams.json`, `data/matches.json`. To point a deployment at a different league entirely, without forking those files:
 
@@ -32,3 +41,7 @@ npm run build
 ```
 
 Outputs a static `dist/` — deploy it anywhere that serves static files (Cloudflare Pages, Vercel, GitHub Pages, or your own nginx/Docker setup).
+
+## License
+
+MIT — see [LICENSE](LICENSE).

@@ -1,7 +1,9 @@
 {
-  "name": "marccer-scaffold",
+  "name": "marccer",
+  "description": "Static, backend-free league-race dashboard — Elo ratings, Poisson/Dixon-Coles prediction, Monte Carlo season simulation, computed client-side from your own league's data.",
+  "license": "MIT",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,12 +12,12 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "scrape": "tsx scripts/scrape.ts"
+    "scrape": "tsx scripts/scrape.ts",
+    "init-schedule": "tsx scripts/init-schedule.ts"
   },
   "dependencies": {
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2",
     "recharts": "^3.10.1"
   },
   "devDependencies": {
