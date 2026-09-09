@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>marccer — Downloads</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-panel: #f8f9fa;
+    --bg-hover: #eaecf0;
+    --border: #a2a9b1;
+    --border-light: #c8ccd1;
+    --text: #202122;
+    --text-dim: #54595d;
+    --text-bright: #000000;
+    --accent: #54595d;
+    --blue: #0645ad;
+    --red: #d33;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --mono: 'Courier New', Courier, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--serif); font-size: 14px; line-height: 1.5;
+    color: var(--text); background: var(--bg);
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:visited { color: #551a8b; }
+
+  .page { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 200px; flex-shrink: 0;
+    background: var(--bg-panel); border-right: 1px solid var(--border);
+    padding: 16px 12px;
+  }
+  .sidebar-title { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+  .sidebar-tagline { font-size: 11px; color: var(--text-dim); margin-bottom: 20px; }
+  .sidebar h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-dim); margin: 16px 0 6px;
+  }
+  .sidebar ul { list-style: none; }
+  .sidebar li { margin-bottom: 4px; font-size: 13px; }
+
+  .main { flex: 1; padding: 24px 32px; max-width: 900px; }
+
+  .section {
+    border: 1px solid var(--border); margin-bottom: 18px;
+  }
+  .section-title {
+    background: var(--bg-panel); border-bottom: 1px solid var(--border);
+    padding: 6px 10px; font-weight: 700; font-size: 15px;
+  }
+  .section-body { padding: 14px; }
+  .section-body p { margin-bottom: 10px; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .btn {
+    display: inline-block; font-family: var(--serif); font-size: 14px;
+    padding: 8px 16px; border: 1px solid var(--border);
+    background: var(--bg-panel); color: var(--text); cursor: pointer;
+  }
+  .btn:hover { background: var(--bg-hover); text-decoration: none; }
+  .btn-primary { border-color: var(--blue); color: var(--blue); font-weight: 700; }
+  .btn-support { border-color: #b8860b; color: #8a6500; font-weight: 700; }
+
+  code {
+    font-family: var(--mono); font-size: 12px;
+    background: var(--bg-panel); border: 1px solid var(--border-light);
+    padding: 1px 4px;
+  }
+
+  footer {
+    margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--border-light);
+    font-size: 11px; color: var(--text-dim);
+  }
+
+  @media (max-width: 640px) {
+    .page { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="sidebar">
+      <div class="sidebar-title">marccer</div>
+      <div class="sidebar-tagline">League race analyzer</div>
+
+      <h3>Download</h3>
+      <ul>
+        <li><a href="#download">Source (.zip)</a></li>
+        <li><a href="https://github.com/hjun1052/marccer" target="_blank" rel="noopener">GitHub repo</a></li>
+      </ul>
+
+      <h3>Documentation</h3>
+      <ul>
+        <li><a href="https://github.com/hjun1052/marccer#readme" target="_blank" rel="noopener">README / Self-hosting guide</a></li>
+      </ul>
+
+      <h3>Misc</h3>
+      <ul>
+        <li><a href="https://buymeacoffee.com/hjun1052" target="_blank" rel="noopener">Support</a></li>
+        <li><a href="https://github.com/hjun1052/marccer/blob/master/LICENSE" target="_blank" rel="noopener">License (MIT)</a></li>
+      </ul>
+    </nav>
+
+    <main class="main">
+      <div class="section">
+        <div class="section-title">marccer Downloads</div>
+        <div class="section-body">
+          <p>
+            marccer is a static, backend-free league-race dashboard — Elo-style team ratings,
+            Poisson/Dixon-Coles match prediction, and Monte Carlo season simulation, all computed
+            client-side from your own league's data. No server, no database required.
+          </p>
+          <p>
+            This isn't a ready-to-run app you install — it's a source template you fork and
+            configure with your own league's teams and results, then deploy as a static site.
+            See the README for the full self-hosting walkthrough.
+          </p>
+        </div>
+      </div>
+
+      <div class="section" id="download">
+        <div class="section-title">Get the Source</div>
+        <div class="section-body">
+          <p>Fork the repo, or grab a source snapshot directly:</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="https://github.com/hjun1052/marccer/archive/refs/heads/master.zip">⬇ Download Source (.zip)</a>
+            <a class="btn" href="https://github.com/hjun1052/marccer" target="_blank" rel="noopener">Go to GitHub →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Quick Start</div>
+        <div class="section-body">
+          <p><code>npm install</code> → <code>npm run dev</code> to run the demo league locally.</p>
+          <p>To set up your own league: write <code>data/teams.json</code> and <code>data/league.json</code>, then run <code>npm run init-schedule</code> to generate the full-season fixture list. Full details in the README.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Support</div>
+        <div class="section-body">
+          <p>marccer is free and MIT-licensed. If it's useful to you, a coffee is always appreciated — no obligation.</p>
+          <div class="btn-row">
+            <a class="btn btn-support" href="https://buymeacoffee.com/hjun1052" target="_blank" rel="noopener">☕ Buy Me a Coffee</a>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        marccer — MIT License. Source on <a href="https://github.com/hjun1052/marccer" target="_blank" rel="noopener">GitHub</a>.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

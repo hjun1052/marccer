@@ -42,6 +42,10 @@ npm run build
 
 Outputs a static `dist/` — deploy it anywhere that serves static files (Cloudflare Pages, Vercel, GitHub Pages, or your own nginx/Docker setup).
 
+## Downloads page
+
+`landing/index.html` is a standalone static download/support page (source zip, GitHub link, Buy Me a Coffee) — deploy it as its own Cloudflare Pages project with build output directory set to `landing/` and no build command. Not part of the app build.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
