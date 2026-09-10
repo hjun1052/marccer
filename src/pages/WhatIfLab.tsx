@@ -41,34 +41,40 @@ export default function WhatIfLab() {
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [scoreInputs, setScoreInputs] = useState<Record<string, { home: string; away: string }>>({});
   const [actionModalMatchId, setActionModalMatchId] = useState<string | null>(null);
+  const [includePostponed, setIncludePostponed] = useState(false);
+
+  const isFutureStatus = useCallback(
+    (status: string) => status === 'scheduled' || (includePostponed && status === 'postponed'),
+    [includePostponed]
+  );
 
   // Future matches for target team
   const targetFutureMatches = useMemo(() =>
     matches
       .filter(
         (m) =>
-          m.status === 'scheduled' &&
+          isFutureStatus(m.status) &&
           (m.homeTeamId === league.targetTeamId || m.awayTeamId === league.targetTeamId)
       )
       .sort((a, b) => a.round - b.round),
-    [matches, league.targetTeamId]
+    [matches, league.targetTeamId, isFutureStatus]
   );
 
   // All future matches (filtered by round if selected)
   const allFutureMatches = useMemo(() => {
     let filtered = matches
-      .filter((m) => m.status === 'scheduled')
+      .filter((m) => isFutureStatus(m.status))
       .sort((a, b) => a.round - b.round);
     if (selectedRound !== null) {
       filtered = filtered.filter((m) => m.round === selectedRound);
     }
     return filtered;
-  }, [matches, selectedRound]);
+  }, [matches, selectedRound, isFutureStatus]);
 
   const rounds = useMemo(() => {
-    const roundSet = new Set(matches.filter((m) => m.status === 'scheduled').map((m) => m.round));
+    const roundSet = new Set(matches.filter((m) => isFutureStatus(m.status)).map((m) => m.round));
     return Array.from(roundSet).sort((a, b) => a - b);
-  }, [matches]);
+  }, [matches, isFutureStatus]);
 
   const handleCreateScenario = useCallback(() => {
     if (!scenarioName.trim()) return;
@@ -247,6 +253,14 @@ export default function WhatIfLab() {
                   ))}
               </select>
             </div>
+            <label className="config-group" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 }}>
+              <input
+                type="checkbox"
+                checked={includePostponed}
+                onChange={(e) => setIncludePostponed(e.target.checked)}
+              />
+              {t('Include postponed matches')}
+            </label>
           </div>
 
           {/* Quick Override Panel */}

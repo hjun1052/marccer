@@ -529,6 +529,7 @@ export const ko: Record<string, string> = {
   'Exact Score': '정확한 스코어',
   'Compare With': '비교 대상',
   'None': '없음',
+  'Include postponed matches': '연기된 경기 포함',
 
   // --- Chart customization ---
   'Chart Type': '차트 종류',
