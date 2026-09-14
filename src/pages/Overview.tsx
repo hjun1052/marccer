@@ -47,20 +47,28 @@ export default function Overview() {
       setTrend([]);
       return;
     }
-    setTrendComputing(true);
-    setTrend([]);
     const trendConfig = { ...simulationConfig, count: Math.min(simulationConfig.count, TREND_SIM_COUNT) };
 
-    const step = (i: number, acc: TitleTrendPoint[]) => {
+    // Current round is "now" — already known from the headline simulation,
+    // so show it immediately instead of waiting on the historical re-sims.
+    const currentRound = rounds[rounds.length - 1];
+    const currentPoint: TitleTrendPoint = {
+      round: currentRound,
+      titleProbability: simulation.results.find((r) => r.teamId === league.targetTeamId)?.titleProbability ?? 0,
+    };
+    setTrend([currentPoint]);
+    setTrendComputing(true);
+
+    const historicalRounds = rounds.slice(0, -1);
+    const step = (i: number, historicalAcc: TitleTrendPoint[]) => {
       if (trendCancelRef.current) return;
-      if (i >= rounds.length) {
-        setTrend(acc);
+      if (i >= historicalRounds.length) {
         setTrendComputing(false);
         return;
       }
-      const point = computeTitleProbabilityAtRound(projectionLeague, teams, projectionMatches, trendConfig, league.targetTeamId, rounds[i]);
-      const next = [...acc, point];
-      setTrend(next);
+      const point = computeTitleProbabilityAtRound(projectionLeague, teams, projectionMatches, trendConfig, league.targetTeamId, historicalRounds[i]);
+      const next = [...historicalAcc, point];
+      setTrend([...next, currentPoint]);
       setTimeout(() => step(i + 1, next), 0);
     };
     setTimeout(() => step(0, []), 0);
