@@ -80,12 +80,17 @@ export default function Overview() {
   const targetTeam = teams.find((t) => t.id === league.targetTeamId);
   const targetResult = simulation?.results.find((r) => r.teamId === league.targetTeamId);
 
-  // Top 5 teams for chart
-  const topTeams = standings.slice(0, 5).map((s, i) => ({
-    name: getTeamName(teams, s.teamId, lang),
-    points: s.points,
-    fill: COLORS[i],
-  }));
+  // Top 5 teams for chart. Short names — the axis has no room for full
+  // team names across 5 bars, and recharts silently drops overlapping
+  // ticks rather than wrapping them.
+  const topTeams = standings.slice(0, 5).map((s, i) => {
+    const team = teams.find((tm) => tm.id === s.teamId);
+    return {
+      name: team ? pickTeamShort(team, lang) : getTeamName(teams, s.teamId, lang),
+      points: s.points,
+      fill: COLORS[i],
+    };
+  });
 
   // Title probability chart
   const titleProbs = simulation?.results
@@ -264,7 +269,7 @@ export default function Overview() {
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={topTeams} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#aaa' }} />
+              <XAxis dataKey="name" interval={0} tick={{ fontSize: 10, fill: '#aaa' }} />
               <YAxis tick={{ fontSize: 10, fill: '#aaa' }} />
               <Tooltip contentStyle={{ background: '#1a1a1a', border: '1px solid #333', fontSize: 11 }} />
               <Bar dataKey="points" fill="#e74c3c" />
