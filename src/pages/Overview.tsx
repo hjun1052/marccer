@@ -28,7 +28,7 @@ const COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#1abc9c'
 const TREND_SIM_COUNT = 2000;
 
 export default function Overview() {
-  const { league, teams, matches, standings, simulation, predictions, strengths, pathResult, rootingGuide, rootingRounds, rootingRound, setRootingRound, simulationConfig } = useData();
+  const { league, teams, matches, standings, simulation, predictions, strengths, pathResult, rootingGuide, rootingRounds, rootingRound, setRootingRound, simulationConfig, projectionLeague, projectionMatches } = useData();
   const { t, lang } = useI18n();
 
   // Title probability trend: no stored snapshots — retroactively rebuilds
@@ -42,7 +42,7 @@ export default function Overview() {
   useEffect(() => {
     trendCancelRef.current = false;
     if (!simulation) return;
-    const rounds = completedRoundsSoFar(matches);
+    const rounds = completedRoundsSoFar(projectionMatches);
     if (rounds.length < 2) {
       setTrend([]);
       return;
@@ -58,7 +58,7 @@ export default function Overview() {
         setTrendComputing(false);
         return;
       }
-      const point = computeTitleProbabilityAtRound(league, teams, matches, trendConfig, league.targetTeamId, rounds[i]);
+      const point = computeTitleProbabilityAtRound(projectionLeague, teams, projectionMatches, trendConfig, league.targetTeamId, rounds[i]);
       const next = [...acc, point];
       setTrend(next);
       setTimeout(() => step(i + 1, next), 0);
@@ -66,7 +66,7 @@ export default function Overview() {
     setTimeout(() => step(0, []), 0);
 
     return () => { trendCancelRef.current = true; };
-  }, [league, teams, matches, simulation, simulationConfig]);
+  }, [league, teams, projectionLeague, projectionMatches, simulation, simulationConfig]);
 
   const targetStanding = standings.find((s) => s.teamId === league.targetTeamId);
   const targetTeam = teams.find((t) => t.id === league.targetTeamId);
